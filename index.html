@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>게임 모음</title>
+<style>
+  :root {
+    --bg: #f6f7fb;
+    --card: #ffffff;
+    --text: #1c1e24;
+    --muted: #6b7280;
+    --line: #e5e7eb;
+    --accent: #4f46e5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14161a;
+      --card: #1e2127;
+      --text: #f2f3f5;
+      --muted: #9ca3af;
+      --line: #2e323a;
+      --accent: #818cf8;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 40px 20px 64px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
+                 "Pretendard", "Noto Sans KR", sans-serif;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; }
+  h1 { font-size: 32px; margin: 0 0 8px; letter-spacing: -0.02em; }
+  .sub { color: var(--muted); margin: 0 0 32px; font-size: 15px; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+  }
+  .card {
+    display: block;
+    padding: 24px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    text-decoration: none;
+    color: inherit;
+    transition: transform .15s ease, border-color .15s ease;
+  }
+  .card:hover { transform: translateY(-3px); border-color: var(--accent); }
+  .emoji { font-size: 36px; line-height: 1; display: block; margin-bottom: 12px; }
+  .title { font-size: 18px; font-weight: 600; margin-bottom: 6px; }
+  .desc { font-size: 14px; color: var(--muted); line-height: 1.5; }
+  .empty { color: var(--muted); font-size: 15px; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>게임 모음</h1>
+    <p class="sub">플레이할 게임을 골라주세요.</p>
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <script src="games.js"></script>
+  <script>
+    const grid = document.getElementById("grid");
+    if (!GAMES.length) {
+      grid.innerHTML = '<p class="empty">등록된 게임이 없습니다.</p>';
+    } else {
+      grid.innerHTML = GAMES.map(g => `
+        <a class="card" href="${encodeURIComponent(g.dir)}/index.html">
+          <span class="emoji">${g.emoji}</span>
+          <div class="title">${g.title}</div>
+          <div class="desc">${g.desc}</div>
+        </a>
+      `).join("");
+    }
+  </script>
+</body>
+</html>
