@@ -97,7 +97,7 @@ async function generate(item) {
   /* API 가 지원하는 형식은 JPEG 뿐입니다 (PNG 는 거부됩니다) */
   const body = {
     model: MODEL,
-    input: [{ type: "text", text: `${STYLE}. ${item.prompt}` }],
+    input: [{ type: "text", text: `${item.style || STYLE}. ${item.prompt}` }],
     response_format: {
       type: "image",
       mime_type: "image/jpeg",
@@ -133,6 +133,7 @@ async function generate(item) {
 
 const targets = ART.filter((a) => {
   if (only) return only.has(a.id);
+  if (a.skip) return false;
   if (force) return true;
   return !fs.existsSync(path.join(ROOT, a.out));
 });

@@ -8,8 +8,7 @@ body { background: #ded5f3; }
   min-height: 100vh;
   padding-bottom: calc(14px + env(safe-area-inset-bottom));
   background:
-    radial-gradient(120% 55% at 50% 0%, rgba(223, 240, 255, .6) 0%, transparent 62%),
-    url("../shared/art/bg-sky.jpg") center / cover no-repeat,
+    radial-gradient(120% 55% at 50% 0%, #dff0ff 0%, transparent 62%),
     linear-gradient(180deg, #cfe2f7 0%, #ded4f5 38%, #f0d9ef 70%, #fde6f0 100%);
 }
 

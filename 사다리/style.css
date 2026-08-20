@@ -7,8 +7,7 @@ body { background: var(--paper); }
   flex-direction: column;
   min-height: 100vh;
   background:
-    radial-gradient(110% 45% at 50% 0%, rgba(255,255,255,.8) 0%, transparent 60%),
-    url("../shared/art/bg-paper.jpg") center / cover no-repeat,
+    radial-gradient(110% 45% at 50% 0%, #ffffff 0%, transparent 60%),
     linear-gradient(180deg, #fdfaf3 0%, var(--paper) 45%, #f2ece0 100%);
 }
 .ladder .topbar__title {

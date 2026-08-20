@@ -5,9 +5,9 @@
 (function () {
   "use strict";
 
-  var FACES = ["🐻", "🐱", "🐼", "🐰", "🦊", "🐯", "🐨", "🐸", "🐤", "🐙"];
+  var FACES = ["🐻", "🐱", "🐼", "🐰", "🦊", "🐯", "🐷", "🐸", "🐧", "🐶"];
   var ARTS = ["ch-bear", "ch-cat", "ch-panda", "ch-rabbit", "ch-fox",
-              "ch-tiger", "ch-koala", "ch-frog", "ch-chick", "ch-octopus"];
+              "ch-tiger", "ch-pig", "ch-frog", "ch-penguin", "ch-dog"];
   var TONES = ["#f7a8a8", "#fbcf86", "#f6e78a", "#b3e59c", "#9adae3",
                "#a6b6f2", "#d0aef0", "#f6adda", "#dcc6a8", "#b4c8dc"];
 
