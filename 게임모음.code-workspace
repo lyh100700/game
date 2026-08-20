@@ -1,0 +1,42 @@
+{
+  "folders": [
+    {
+      "name": "게임 모음",
+      "path": "."
+    }
+  ],
+  "settings": {
+    "files.encoding": "utf8",
+    "files.eol": "\n",
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "editor.tabSize": 2,
+    "editor.wordWrap": "on",
+    "editor.renderWhitespace": "boundary",
+    "editor.bracketPairColorization.enabled": true,
+    "html.format.wrapLineLength": 0,
+    "search.exclude": {
+      "**/*.png": true,
+      "**/*.jpg": true,
+      "**/*.jpeg": true,
+      "**/*.gif": true
+    },
+    "files.exclude": {
+      "**/.DS_Store": true
+    },
+    "explorer.fileNesting.enabled": true,
+    "explorer.fileNesting.patterns": {
+      "index.html": "style.css, game.js, *.jpg, *.png",
+      "main.css": "main.js",
+      "CLAUDE.md": "ANDROID.md, games.js, games.txt, .gitignore, *.code-workspace, manifest.webmanifest, sw.js"
+    },
+    "workbench.editor.labelFormat": "medium",
+    "liveServer.settings.root": "/",
+    "liveServer.settings.donotShowInfoMsg": true
+  },
+  "extensions": {
+    "recommendations": [
+      "ritwickdey.liveserver"
+    ]
+  }
+}

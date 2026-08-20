@@ -1,36 +1,70 @@
-# 게임 모음 프로젝트
+# GAMES! — 미니게임 모음
 
-여러 개의 미니게임을 각각 독립적으로 만들고, 루트의 허브 페이지에서 모아 보는 구조입니다.
+네 가지 복불복 미니게임을 한 앱에 모은 프로젝트입니다.
+메인 화면에서 게임을 고르고, 각 게임은 자기 폴더 안에서 완결됩니다.
 
 ## 구조
 
 ```
 game/
-├── index.html    허브 (게임 목록)
-├── games.js      게임 매니페스트
-└── <게임이름>/
-    ├── index.html
-    ├── style.css
-    └── game.js
+├── index.html              메인 선택화면
+├── main.css / main.js
+├── games.js                게임 매니페스트
+├── manifest.webmanifest    PWA 설정
+├── sw.js                   서비스 워커 (오프라인)
+├── icons/                  앱 아이콘 (앱아이콘.jpg 에서 생성)
+├── shared/
+│   ├── theme.css           색·버튼·팝업 등 공통 토큰
+│   ├── progress.js         플레이 횟수 기록 (localStorage)
+│   └── sound.js            효과음 엔진 (Web Audio 합성)
+├── 이빨/       DINO CHOMP    공룡 이빨 누르기
+├── 사다리/     LADDER PATH   사다리 타기
+├── 스톱워치/   MULTIPLY TIME 시간 곱하기
+└── 룰렛/       PRIZE WHEEL   룰렛 돌리기
 ```
+
+각 게임 폴더는 `index.html` · `style.css` · `game.js` 로 같은 구성입니다.
 
 ## 규칙
 
-- **스택**: 순수 HTML/CSS/JS. 빌드 도구·프레임워크·외부 CDN 사용하지 않음.
-- **독립성**: 각 게임은 자기 폴더 안에서 완결된다. 다른 게임의 파일을 참조하지 않는다.
-- **전역 오염 금지**: `game.js`는 IIFE로 감싸고, `window`에 변수를 추가하지 않는다.
-- **CSS 스코프**: 게임 고유 클래스에는 접두사를 붙인다 (예: `.ladder-board`, `.roulette-wheel`).
-  나중에 한 페이지로 병합할 때 충돌을 막기 위함이다.
-- **다크 모드**: `prefers-color-scheme`로 라이트/다크 색을 모두 정의한다.
-- **뒤로 가기**: 모든 게임 페이지 상단에 허브로 돌아가는 링크를 둔다.
+- **스택**: 순수 HTML/CSS/JS. 빌드 도구·프레임워크·외부 CDN 없음.
+- **독립성**: 게임은 `shared/` 만 참조하고 다른 게임 파일은 건드리지 않는다.
+- **전역 오염 금지**: `game.js` 는 IIFE 로 감싼다. 전역은 `Sfx`·`Progress`·`GAMES` 뿐.
+- **CSS 스코프**: 게임 고유 클래스는 그 게임 `style.css` 에만 둔다.
+  공통으로 쓸 것은 `shared/theme.css` 로 올린다.
+- **세로 화면 기준**: 폰 세로 비율이 기본. `.screen` 이 최대 480px 로 가운데 정렬된다.
+- **효과음**: 오디오 파일을 쓰지 않는다. `shared/sound.js` 에서 Web Audio 로 합성한다.
+  새 소리가 필요하면 그 파일의 `SOUNDS` 에 추가한다.
+- **접근성**: `prefers-reduced-motion` 을 존중한다 (theme.css 에서 일괄 처리).
+
+## 화면 자료
+
+`games.txt` 에 각 게임의 기획이, 폴더마다 기준이 된 화면 이미지가 들어 있습니다.
+
+- **이빨**: `이빨화면.jpg`(입 벌림) / `이빨화면2.jpg`(입 다뭄) 를 **배경으로 직접** 사용.
+  이빨 좌표는 `game.js` 의 `TEETH` 배열에 이미지 기준 백분율로 적혀 있습니다.
+  실제 이빨과 어긋나면 게임 화면에서 **D 키**를 눌러 조정 모드를 켜고,
+  이미지를 클릭하면 콘솔에 좌표가 찍힙니다.
+- **나머지 셋**: 스크린샷에 UI 가 함께 찍혀 있어 배경으로 쓸 수 없습니다.
+  같은 톤(파스텔 하늘·크림색)을 CSS 로 재현했습니다.
 
 ## 게임 추가하기
 
-1. 게임 이름으로 폴더를 만든다.
-2. 폴더 안에 `index.html` / `style.css` / `game.js`를 만든다 (기존 게임 폴더 복사).
-3. `games.js`의 `GAMES` 배열에 한 줄 추가한다.
+1. 게임 이름으로 폴더를 만들고 `index.html` / `style.css` / `game.js` 를 만든다.
+2. `games.js` 의 `GAMES` 배열에 한 줄 추가한다.
+3. `main.js` 의 `THUMBS` 에 썸네일을, `main.css` 에 `.thumb--<이름>` 배경색을 추가한다.
+4. `sw.js` 의 `ASSETS` 에 새 파일 경로를 넣고 `VERSION` 을 올린다.
 
 ## 실행
 
-빌드 없이 `index.html`을 브라우저로 열면 된다.
-로컬 서버가 필요하면: `python3 -m http.server 8000`
+빌드 없이 `index.html` 을 열면 되지만, **로컬 서버로 여는 것을 권합니다.**
+`file://` 로 열면 서비스 워커가 동작하지 않고 한글 경로에서 문제가 생길 수 있습니다.
+
+```bash
+python3 -m http.server 8000
+```
+
+## 배포와 앱 설치
+
+[ANDROID.md](ANDROID.md) 참고. Cloudflare Pages 로 배포하고 PWABuilder 로 APK 를 만듭니다.
+**내용을 고친 뒤에는 `sw.js` 의 `VERSION` 을 반드시 올리세요.**

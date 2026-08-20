@@ -1,7 +1,31 @@
-// 게임 목록. 새 게임을 추가하려면 폴더를 만들고 이 배열에 한 줄만 넣으면 됩니다.
+/* 게임 목록. 새 게임을 추가하려면 폴더를 만들고 이 배열에 한 줄 넣으면 됩니다. */
 const GAMES = [
-  { dir: "룰렛", title: "룰렛", desc: "돌림판을 돌려 당첨을 정하는 게임", emoji: "🎡" },
-  { dir: "사다리", title: "사다리", desc: "사다리를 타고 내려가 결과를 확인하는 게임", emoji: "🪜" },
-  { dir: "스톱워치", title: "스톱워치", desc: "시간을 재고 기록하는 도구", emoji: "⏱️" },
-  { dir: "이빨", title: "이빨", desc: "공룡 이빨을 눌러 운을 시험하는 게임", emoji: "🦖" },
+  {
+    id: "dino",
+    dir: "이빨",
+    title: "DINO CHOMP",
+    ko: "공룡 이빨",
+    thumb: "dino",
+  },
+  {
+    id: "ladder",
+    dir: "사다리",
+    title: "LADDER PATH",
+    ko: "사다리 타기",
+    thumb: "ladder",
+  },
+  {
+    id: "watch",
+    dir: "스톱워치",
+    title: "MULTIPLY TIME",
+    ko: "시간 곱하기",
+    thumb: "watch",
+  },
+  {
+    id: "wheel",
+    dir: "룰렛",
+    title: "PRIZE WHEEL",
+    ko: "룰렛",
+    thumb: "wheel",
+  },
 ];

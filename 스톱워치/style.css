@@ -1,28 +1,235 @@
-:root {
-  --bg: #f6f7fb;
-  --text: #1c1e24;
-  --muted: #6b7280;
-}
-@media (prefers-color-scheme: dark) {
-  :root { --bg: #14161a; --text: #f2f3f5; --muted: #9ca3af; }
-}
-* { box-sizing: border-box; }
-body {
-  margin: 0;
+/* ===== MULTIPLY TIME =====
+   배경은 스톱워치 화면.jpg 의 파스텔 구름 하늘을 CSS로 재현한 것입니다.
+   (원본 스크린샷에는 숫자·버튼이 함께 그려져 있어 그대로 쓸 수 없습니다.) */
+
+body { background: #efe0f2; }
+
+.watch {
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
-  background: var(--bg);
-  color: var(--text);
-  font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
-               "Pretendard", "Noto Sans KR", sans-serif;
+  padding-bottom: calc(14px + env(safe-area-inset-bottom));
+  background:
+    linear-gradient(180deg,
+      var(--sky-3) 0%,
+      #e2d5f5 26%,
+      var(--sky-1) 58%,
+      #ffd7e6 78%,
+      var(--sky-4) 100%);
 }
-.topbar {
+
+/* 뭉게구름 */
+.sky { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.cloud {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, rgba(255,255,255,.95), rgba(255,255,255,.35) 60%, transparent 72%);
+  filter: blur(2px);
+}
+.cloud--1 { width: 260px; height: 190px; left: -60px; top: 12%; }
+.cloud--2 { width: 320px; height: 220px; right: -90px; top: 34%; opacity: .8; }
+.cloud--3 { width: 300px; height: 200px; left: -40px; bottom: 14%; opacity: .7; }
+
+.watch .topbar { color: #7a5b86; }
+.watch .topbar__back { background: rgba(255,255,255,.75); color: #7a5b86; }
+
+.guide {
+  position: relative;
+  z-index: 2;
+  margin: 2px 0 0;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 800;
+  color: #8a6c95;
+  min-height: 20px;
+}
+.guide.is-live { color: #d1517f; animation: float 1.2s ease-in-out infinite; }
+
+/* ---- 시간 표시 ---- */
+.display {
+  position: relative;
+  z-index: 2;
+  flex: 0 0 auto;
+  padding: 18px 12px 6px;
+  text-align: center;
+}
+.display__time {
+  font-size: clamp(44px, 15vw, 68px);
+  font-weight: 900;
+  letter-spacing: .02em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+/* 자릿수마다 다른 파스텔 — 원본 화면의 사탕색 숫자를 흉내 냈습니다 */
+.display__time i {
+  font-style: normal;
+  color: var(--tone, #f6a9c0);
+  -webkit-text-stroke: 5px #fff;
+  paint-order: stroke fill;
+  text-shadow: 0 4px 0 rgba(255,255,255,.9), 0 7px 8px rgba(150,110,170,.28);
+}
+.display__time i.is-key { animation: keyPop .4s ease; }
+@keyframes keyPop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.35); }
+  100% { transform: scale(1); }
+}
+.display__time i { display: inline-block; }
+
+.display__hint {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 20px 24px;
+  justify-content: flex-end;
+  gap: 4px;
+  padding-right: 6%;
+  margin-top: -2px;
+  color: #e2699a;
+  font-weight: 900;
+  font-size: 13px;
 }
-.topbar h1 { font-size: 20px; margin: 0; }
-.back { color: var(--muted); text-decoration: none; font-size: 15px; }
-.back:hover { color: var(--text); }
-#app { padding: 24px; }
-.placeholder { color: var(--muted); }
+.display__arrow { font-size: 22px; }
+
+/* ---- 조작 버튼 ---- */
+.pads {
+  position: relative;
+  z-index: 2;
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  padding: 6px 18px;
+}
+.pad {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 140px;
+  height: 118px;
+  border: none;
+  background: none;
+  font-family: inherit;
+  cursor: pointer;
+  transition: transform .12s ease;
+}
+.pad:active { transform: translateY(4px) scale(.97); }
+.pad__label {
+  position: relative;
+  z-index: 2;
+  font-size: 26px;
+  font-weight: 900;
+  color: #fff;
+  text-shadow: 0 2px 0 rgba(150, 110, 170, .55);
+}
+
+/* 구름 모양 버튼 */
+.pad--cloud::before,
+.pad--cloud::after {
+  content: "";
+  position: absolute;
+  background: linear-gradient(#fffdf6, #f6e6cf);
+  border-radius: 50%;
+  box-shadow: 0 6px 14px rgba(150, 110, 170, .3);
+}
+.pad--cloud::before { width: 122px; height: 74px; bottom: 16px; border-radius: 60px; }
+.pad--cloud::after  { width: 74px;  height: 66px; top: 16px; left: 22px; }
+.pad--cloud .pad__label { color: #a2795f; text-shadow: 0 2px 0 rgba(255,255,255,.9); }
+
+/* 별 모양 버튼 */
+.pad--star::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(150deg, #bda6f0, #9d84e6 60%, #8a6fdc);
+  clip-path: polygon(50% 2%, 62% 36%, 98% 36%, 69% 58%, 80% 93%, 50% 71%, 20% 93%, 31% 58%, 2% 36%, 38% 36%);
+  box-shadow: 0 6px 16px rgba(120, 90, 190, .4);
+}
+.pad--star.is-stop::before { background: linear-gradient(150deg, #ffb3c8, #f2789f 60%, #e05e8c); }
+.pad--star.is-live::before { animation: float 1s ease-in-out infinite; }
+.pad__paw {
+  position: absolute;
+  z-index: 3;
+  top: 2px;
+  right: 8px;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #fff;
+  font-size: 16px;
+  box-shadow: 0 2px 6px rgba(120, 90, 190, .35);
+}
+.pad:disabled { filter: grayscale(.5) opacity(.55); cursor: default; }
+
+/* ---- 결과판 ---- */
+.result {
+  position: relative;
+  z-index: 2;
+  flex: 0 0 auto;
+  margin: 0 12px;
+  padding: 10px 12px 14px;
+  border: 3px solid #d8b8a0;
+  border-radius: 18px;
+  background: linear-gradient(#fdf3e2, #f6e6cf);
+  box-shadow: var(--shadow-md);
+}
+.result__title {
+  margin: -22px auto 10px;
+  width: max-content;
+  padding: 5px 22px;
+  border-radius: 999px;
+  background: #f7b8cd;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 900;
+  box-shadow: 0 3px 0 #dd8fab;
+}
+.result__row { display: grid; grid-template-columns: 1fr 1fr 1.1fr; gap: 8px; }
+
+.slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 8px 4px;
+  border: 2px solid #e4cdb4;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, .55);
+}
+.slot.is-done { border-color: #f0a8c2; background: rgba(255, 245, 249, .9); }
+.slot__name { font-size: 11px; font-weight: 800; color: #a2795f; }
+.slot__time { font-size: 13px; font-weight: 800; font-variant-numeric: tabular-nums; color: #7a5b86; }
+.slot__digit {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 2px solid #d9b7e0;
+  background: #fff;
+  font-size: 19px;
+  font-weight: 900;
+  color: #8a6fdc;
+}
+.slot__digit.is-set { animation: pop .35s ease; }
+.slot--total { justify-content: center; }
+.slot__total {
+  font-size: 38px;
+  font-weight: 900;
+  line-height: 1;
+  color: #e2699a;
+  -webkit-text-stroke: 3px #fff;
+  paint-order: stroke fill;
+  text-shadow: 0 3px 0 rgba(226, 105, 154, .3);
+}
+.slot__total.is-set { animation: pop .5s cubic-bezier(.2, 1.6, .4, 1); }
+
+.popup__home {
+  display: block;
+  margin-top: 14px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--brown-soft);
+  text-decoration: none;
+}

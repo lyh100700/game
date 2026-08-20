@@ -1,28 +1,141 @@
-:root {
-  --bg: #f6f7fb;
-  --text: #1c1e24;
-  --muted: #6b7280;
-}
-@media (prefers-color-scheme: dark) {
-  :root { --bg: #14161a; --text: #f2f3f5; --muted: #9ca3af; }
-}
-* { box-sizing: border-box; }
-body {
-  margin: 0;
+/* ===== LADDER PATH ===== */
+
+body { background: var(--paper); }
+
+.ladder {
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
-  background: var(--bg);
-  color: var(--text);
-  font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
-               "Pretendard", "Noto Sans KR", sans-serif;
+  background:
+    radial-gradient(90% 40% at 50% 0%, #ffffff 0%, transparent 70%),
+    var(--paper);
 }
-.topbar {
+
+/* ---- 사다리판 ---- */
+.board {
+  position: relative;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  padding: 4px 10px 0;
+  min-height: 0;
+}
+
+/* 위쪽 캐릭터 줄 · 아래쪽 결과 줄 */
+.heads, .goals { position: relative; height: 74px; flex: 0 0 auto; }
+.goals { height: 86px; }
+
+.node {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  width: 62px;
+  border: none;
+  background: none;
+  font-family: inherit;
+  color: inherit;
+  cursor: pointer;
+  padding: 0;
+}
+.node__face {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  font-size: 24px;
+  background: var(--tone, #eee);
+  box-shadow: inset 0 -3px 0 rgba(0, 0, 0, .1), var(--shadow-sm);
+  transition: transform .15s ease;
+}
+.node:active .node__face { transform: scale(.9); }
+.node.is-running .node__face { animation: float .6s ease-in-out infinite; }
+.node__label { font-size: 13px; font-weight: 900; color: var(--brown-soft); }
+
+/* 결과 칸 */
+.goal__icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  font-size: 27px;
+  border-radius: 50%;
+  transition: transform .3s cubic-bezier(.2, 1.6, .4, 1);
+}
+.goal__name { font-size: 12px; font-weight: 900; line-height: 1.15; text-align: center; }
+.goal__sub { font-size: 10px; font-weight: 700; opacity: .6; }
+.goal.is-win .goal__name { color: #d68a1f; }
+.goal.is-hit .goal__icon {
+  transform: scale(1.35);
+  filter: drop-shadow(0 0 12px rgba(255, 196, 60, .95));
+}
+
+/* ---- 사다리 선 ---- */
+.track { position: relative; flex: 1 1 auto; min-height: 220px; }
+.track__svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+.rail { stroke-linecap: round; }
+.rung { stroke-linecap: round; }
+
+/* 캐릭터가 지나간 자취 */
+.trace {
+  fill: none;
+  stroke-width: 7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .18));
+}
+.token { filter: drop-shadow(0 3px 4px rgba(0, 0, 0, .3)); }
+
+/* ---- 하단 조작부 ---- */
+.controls {
+  flex: 0 0 auto;
+  padding: 10px 16px calc(16px + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.controls__row { display: flex; gap: 10px; }
+.controls__row .btn { flex: 1 1 0; font-size: 15px; padding: 13px 10px; }
+.controls__go { width: 100%; font-size: 19px; padding: 16px; }
+.controls__go:disabled { filter: grayscale(.6) opacity(.55); }
+
+/* ---- 인원 조절 ---- */
+.stepper {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 20px 24px;
+  justify-content: center;
+  gap: 18px;
+  margin: 6px 0 22px;
 }
-.topbar h1 { font-size: 20px; margin: 0; }
-.back { color: var(--muted); text-decoration: none; font-size: 15px; }
-.back:hover { color: var(--text); }
-#app { padding: 24px; }
-.placeholder { color: var(--muted); }
+.stepper__btn {
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 16px;
+  background: var(--btn-blue);
+  color: #fff;
+  font-family: inherit;
+  font-size: 26px;
+  font-weight: 900;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: inset 0 -4px 0 var(--btn-blue-deep);
+}
+.stepper__btn:active { transform: translateY(3px); box-shadow: none; }
+.stepper__btn:disabled { filter: grayscale(.7) opacity(.5); }
+.stepper__value { font-size: 26px; font-weight: 800; min-width: 76px; }
+.stepper__value b { font-size: 34px; font-weight: 900; color: var(--btn-blue-deep); }
+
+.popup__home {
+  display: block;
+  margin-top: 14px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--brown-soft);
+  text-decoration: none;
+}

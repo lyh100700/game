@@ -1,0 +1,41 @@
+{
+  "name": "GAMES! 미니게임 모음",
+  "short_name": "GAMES!",
+  "description": "공룡 이빨 · 사다리 타기 · 시간 곱하기 · 룰렛, 네 가지 복불복 미니게임",
+  "lang": "ko",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "id": "/game/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#a9d5a1",
+  "theme_color": "#a9d5a1",
+  "categories": ["games", "entertainment"],
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    { "name": "공룡 이빨", "url": "./이빨/index.html", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "사다리 타기", "url": "./사다리/index.html", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "시간 곱하기", "url": "./스톱워치/index.html", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "룰렛", "url": "./룰렛/index.html", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] }
+  ]
+}

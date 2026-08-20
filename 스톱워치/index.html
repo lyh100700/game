@@ -2,20 +2,90 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>스톱워치</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#e9d7f2">
+<title>MULTIPLY TIME</title>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../icons/icon-192.png">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="stylesheet" href="../shared/theme.css">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="topbar">
-    <a class="back" href="../index.html">← 목록</a>
-    <h1>스톱워치</h1>
-  </header>
+  <div class="screen watch" id="screen">
+    <div class="sky" aria-hidden="true">
+      <span class="cloud cloud--1"></span>
+      <span class="cloud cloud--2"></span>
+      <span class="cloud cloud--3"></span>
+    </div>
 
-  <main id="app">
-    <p class="placeholder">아직 만들어지지 않았습니다.</p>
-  </main>
+    <header class="topbar">
+      <a class="topbar__back" href="../index.html" aria-label="게임 목록으로">←</a>
+      <div>
+        <h1 class="topbar__title">MULTIPLY TIME</h1>
+        <p class="topbar__sub">소수점 끝자리 두 개를 곱해요</p>
+      </div>
+    </header>
 
+    <p class="guide" id="guide">별을 눌러 시작하세요</p>
+
+    <!-- 시간 표시 -->
+    <div class="display">
+      <div class="display__time" id="time">00:00.00</div>
+      <div class="display__hint" aria-hidden="true">
+        <span class="display__arrow">↗</span>
+        <span class="display__note">이 자리!</span>
+      </div>
+    </div>
+
+    <!-- 조작 버튼 -->
+    <div class="pads">
+      <button class="pad pad--cloud" id="reset" type="button">
+        <span class="pad__label">초기화</span>
+      </button>
+      <button class="pad pad--star" id="action" type="button">
+        <span class="pad__paw">🐾</span>
+        <span class="pad__label" id="actionLabel">시작</span>
+      </button>
+    </div>
+
+    <!-- 결과 -->
+    <section class="result">
+      <h2 class="result__title">게임 결과</h2>
+      <div class="result__row">
+        <div class="slot" id="slot1">
+          <span class="slot__name">Time 1</span>
+          <span class="slot__time" id="t1">--:--.--</span>
+          <span class="slot__digit" id="d1">?</span>
+        </div>
+        <div class="slot" id="slot2">
+          <span class="slot__name">Time 2</span>
+          <span class="slot__time" id="t2">--:--.--</span>
+          <span class="slot__digit" id="d2">?</span>
+        </div>
+        <div class="slot slot--total">
+          <span class="slot__name">곱하기 결과</span>
+          <span class="slot__total" id="total">?</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 결과 팝업 -->
+    <div class="popup" id="popup">
+      <div class="popup__box">
+        <div class="popup__emoji" id="popEmoji">🎉</div>
+        <h2 class="popup__title" id="popTitle">0 점</h2>
+        <p class="popup__text" id="popText"></p>
+        <button class="btn" id="popAgain" type="button">한 판 더</button>
+        <a class="popup__home" href="../index.html">목록으로</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="../shared/progress.js"></script>
+  <script src="../shared/sound.js"></script>
   <script src="game.js"></script>
 </body>
 </html>

@@ -2,20 +2,80 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>룰렛</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#dcd3f5">
+<title>PRIZE WHEEL</title>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../icons/icon-192.png">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="stylesheet" href="../shared/theme.css">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="topbar">
-    <a class="back" href="../index.html">← 목록</a>
-    <h1>룰렛</h1>
-  </header>
+  <div class="screen wheel" id="screen">
+    <div class="sky" aria-hidden="true">
+      <span class="cloud cloud--1"></span>
+      <span class="cloud cloud--2"></span>
+      <span class="spark spark--1">✨</span>
+      <span class="spark spark--2">💎</span>
+      <span class="spark spark--3">🎲</span>
+      <span class="spark spark--4">🪙</span>
+      <span class="spark spark--5">⭐</span>
+    </div>
 
-  <main id="app">
-    <p class="placeholder">아직 만들어지지 않았습니다.</p>
-  </main>
+    <header class="topbar">
+      <a class="topbar__back" href="../index.html" aria-label="게임 목록으로">←</a>
+      <div>
+        <h1 class="topbar__title">룰렛</h1>
+        <p class="topbar__sub">(Roulette)</p>
+      </div>
+    </header>
 
+    <!-- 룰렛판 -->
+    <div class="wheelbox">
+      <div class="pointer" id="pointer">▼</div>
+      <svg class="wheelbox__svg" id="svg" viewBox="-100 -100 200 200" aria-hidden="true"></svg>
+      <div class="fox">🦊</div>
+    </div>
+
+    <!-- 참가자 조절 -->
+    <div class="players">
+      <button class="players__list" id="openList" type="button">👥 참가자 목록</button>
+      <div class="players__set">
+        <input class="players__range" id="range" type="range" min="2" max="10" value="10"
+               aria-label="참가자 수">
+        <span class="players__badge">참가자: <b id="num">10</b>명</span>
+      </div>
+    </div>
+
+    <button class="btn spinBtn" id="spin" type="button">돌리기! 🔄</button>
+
+    <!-- 참가자 목록 -->
+    <div class="popup" id="listPop">
+      <div class="popup__box popup__box--list">
+        <h2 class="popup__title">참가자</h2>
+        <p class="popup__text">(Player List)</p>
+        <div class="plist" id="plist"></div>
+        <button class="btn" id="closeList" type="button">닫기</button>
+      </div>
+    </div>
+
+    <!-- 결과 -->
+    <div class="popup" id="popup">
+      <div class="popup__box">
+        <div class="popup__emoji" id="popEmoji">🎉</div>
+        <h2 class="popup__title" id="popTitle">당첨!</h2>
+        <p class="popup__text" id="popText"></p>
+        <button class="btn" id="popAgain" type="button">한 번 더</button>
+        <a class="popup__home" href="../index.html">목록으로</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="../shared/progress.js"></script>
+  <script src="../shared/sound.js"></script>
   <script src="game.js"></script>
 </body>
 </html>

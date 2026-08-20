@@ -2,20 +2,57 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>이빨</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1b1b1b">
+<title>DINO CHOMP</title>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../icons/icon-192.png">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="stylesheet" href="../shared/theme.css">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="topbar">
-    <a class="back" href="../index.html">← 목록</a>
-    <h1>이빨</h1>
-  </header>
+  <div class="screen dino" id="screen">
 
-  <main id="app">
-    <p class="placeholder">아직 만들어지지 않았습니다.</p>
-  </main>
+    <header class="topbar">
+      <a class="topbar__back" href="../index.html" aria-label="게임 목록으로">←</a>
+      <div>
+        <h1 class="topbar__title">DINO CHOMP</h1>
+        <p class="topbar__sub">이빨을 눌러보세요. 하나는 꽝!</p>
+      </div>
+    </header>
 
+    <!-- 입 이미지 + 이빨 히트 영역 -->
+    <div class="stage" id="stage">
+      <img class="stage__img" id="mouth" src="이빨화면.jpg" alt="입을 벌린 공룡">
+      <div class="teeth" id="teeth"></div>
+    </div>
+
+    <footer class="hud">
+      <div class="hud__count">
+        <span class="hud__num" id="count">0</span>
+        <span class="hud__unit">개 눌렀어요</span>
+      </div>
+      <button class="btn hud__retry" id="retry" type="button">🔄 다시 하기</button>
+    </footer>
+
+    <!-- 결과 팝업 -->
+    <div class="popup" id="popup">
+      <div class="popup__box">
+        <div class="popup__emoji" id="popEmoji">😱</div>
+        <h2 class="popup__title" id="popTitle">CHOMP!</h2>
+        <p class="popup__text" id="popText"></p>
+        <button class="btn" id="popRetry" type="button">다시 하기</button>
+        <a class="popup__home" href="../index.html">목록으로</a>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="../shared/progress.js"></script>
+  <script src="../shared/sound.js"></script>
   <script src="game.js"></script>
 </body>
 </html>
