@@ -66,5 +66,7 @@ python3 -m http.server 8000
 
 ## 배포와 앱 설치
 
-[ANDROID.md](ANDROID.md) 참고. Cloudflare Pages 로 배포하고 PWABuilder 로 APK 를 만듭니다.
+[ANDROID.md](ANDROID.md) 참고. GitHub Pages 로 배포하고 PWABuilder 로 APK 를 만듭니다.
 **내용을 고친 뒤에는 `sw.js` 의 `VERSION` 을 반드시 올리세요.**
+
+`.nojekyll` 은 GitHub Pages 가 파일을 임의로 가공하지 않도록 막는 빈 파일입니다. 지우지 마세요.

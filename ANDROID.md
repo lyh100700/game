@@ -8,43 +8,56 @@
 |---|---|
 | 앱 이름 | GAMES! |
 | 방식 | PWA → TWA (웹앱을 감싼 안드로이드 앱) |
-| 저장소 | 비공개 (`lyh100700/game`) |
-| 배포 | Cloudflare Pages (사이트만 공개, 소스는 비공개 유지) |
+| 저장소 | 공개 (`lyh100700/game`) |
+| 배포 | GitHub Pages |
 | 오프라인 | 지원 (한 번 열면 인터넷 없이 실행) |
 
 > **왜 배포가 필요한가**
 > TWA 는 앱이 웹 주소를 감싸는 구조라서 공개 HTTPS 주소가 반드시 있어야 합니다.
-> 저장소는 비공개로 둘 수 있지만 게임 화면 자체는 인터넷에 열려 있어야 합니다.
+>
+> 저장소를 공개로 두는 이유도 같습니다. 정적 웹사이트는 배포하는 순간
+> HTML·CSS·JS 가 브라우저로 그대로 전달되므로, 저장소를 비공개로 해도
+> 코드는 어차피 공개됩니다. 감춰지는 것은 커밋 이력 정도뿐이라
+> 절차가 더 간단한 GitHub Pages 를 씁니다. (캘비캘린더와 같은 방식)
 
 ---
 
-## 1. Cloudflare Pages 에 연결 (처음 한 번만)
+## 1. GitHub Pages 켜기 (처음 한 번만)
 
-1. https://dash.cloudflare.com 가입 → 로그인
-2. 왼쪽 메뉴 **Workers & Pages** → **Create** → **Pages** 탭
-3. **Connect to Git** → GitHub 계정 연결 → `lyh100700/game` 선택
-4. 빌드 설정은 **전부 비워 둡니다** (빌드 도구를 쓰지 않는 순수 HTML 프로젝트입니다)
+1. https://github.com/lyh100700/game/settings 접속
+2. 아래로 내려 **Danger Zone → Change repository visibility → Public** 으로 바꿉니다
+3. 왼쪽 메뉴 **Pages** 클릭
+4. **Source** 를 `Deploy from a branch` 로 두고
 
    | 항목 | 값 |
    |---|---|
-   | Framework preset | None |
-   | Build command | (비움) |
-   | Build output directory | `/` |
+   | Branch | `main` |
+   | Folder | `/ (root)` |
 
-5. **Save and Deploy** → 1~2분 뒤 주소가 나옵니다
+5. **Save** → 1~2분 뒤 주소가 나옵니다
 
    ```
-   https://game-xxxx.pages.dev
+   https://lyh100700.github.io/game/
    ```
 
 이후로는 `git push` 할 때마다 자동으로 다시 배포됩니다.
+
+> **이메일 노출을 막으려면**
+> 공개 저장소는 커밋 이력에 이메일 주소가 드러납니다.
+> GitHub → Settings → Emails 에서 **Keep my email addresses private** 를 켜고,
+> 앞으로의 커밋에 noreply 주소를 쓰도록 바꿀 수 있습니다.
 
 ---
 
 ## 2. 앱 껍데기 만들기 (PWABuilder)
 
 1. https://www.pwabuilder.com 접속
-2. 위에서 받은 `.pages.dev` 주소 입력 → **Start**
+2. 위에서 받은 주소 입력 → **Start**
+
+   ```
+   https://lyh100700.github.io/game/
+   ```
+
 3. **Package For Stores** → **Android** → **Generate Package**
 4. **`Other Android` 탭**을 고릅니다 ⭐
    - `Google Play` 탭은 서명 없는 파일이 나와 폰에 설치되지 않습니다
@@ -104,7 +117,7 @@ git push
 
 ## 설치 없이 바로 써보기
 
-앱으로 만들지 않아도, 폰 크롬에서 `.pages.dev` 주소를 열고
+앱으로 만들지 않아도, 폰 크롬에서 `https://lyh100700.github.io/game/` 를 열고
 **메뉴 → 홈 화면에 추가** 하면 앱처럼 쓸 수 있습니다.
 메인 화면 아래쪽 **"홈 화면에 앱으로 추가"** 버튼을 눌러도 됩니다.
 
