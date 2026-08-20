@@ -9,8 +9,10 @@ body { background: #efe0f2; }
   flex-direction: column;
   min-height: 100vh;
   padding-bottom: calc(14px + env(safe-area-inset-bottom));
-  background: linear-gradient(180deg,
-    #cfe6f8 0%, #ddd3f3 22%, #f0d4ea 46%, #ffd8e6 68%, #ffe6d8 88%, #fff1e4 100%);
+  background:
+    url("../shared/art/bg-sky.jpg") center / cover no-repeat,
+    linear-gradient(180deg,
+      #cfe6f8 0%, #ddd3f3 22%, #f0d4ea 46%, #ffd8e6 68%, #ffe6d8 88%, #fff1e4 100%);
 }
 
 /* 뭉게구름 */

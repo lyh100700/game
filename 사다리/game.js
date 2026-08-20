@@ -5,6 +5,9 @@
   "use strict";
 
   var FACES = ["🐻", "🐸", "🐤", "🐙", "🐰", "🐱", "🐼", "🦊"];
+  /* 같은 순서의 생성 그림. 파일이 없으면 위 이모지가 그대로 쓰입니다. */
+  var ARTS = ["ch-bear", "ch-frog", "ch-chick", "ch-octopus",
+              "ch-rabbit", "ch-cat", "ch-panda", "ch-fox"];
   var TONES = ["#e8c9a8", "#bfe8b4", "#e6efa8", "#b9d5f2", "#f7c8dd", "#bfe4ee", "#dcd6f2", "#f6cdaa"];
   var LINES = ["#8fd3a4", "#a9b8ef", "#f6a9c0", "#7fd6d1", "#c3e07a", "#f2c07a", "#c9a9e8", "#8fc7ee"];
   var LABELS = ["A", "B", "C", "D", "E", "F", "G", "H"];
@@ -188,7 +191,7 @@
       b.style.left = g.xPct(i) + "%";
       b.style.setProperty("--tone", TONES[i]);
       b.innerHTML =
-        '<span class="node__face">' + FACES[i] + "</span>" +
+        '<span class="node__face">' + FACES[i] + Art.tag(ARTS[i]) + "</span>" +
         '<span class="node__label">' + LABELS[i] + "</span>";
       heads.appendChild(b);
 
@@ -198,7 +201,8 @@
       d.dataset.i = i;
       d.style.left = g.xPct(i) + "%";
       d.innerHTML =
-        '<span class="goal__icon">' + (win ? "🏆" : "🪨") + "</span>" +
+        '<span class="goal__icon">' + (win ? "🏆" : "🪨") +
+          Art.tag(win ? "ic-trophy" : "ic-rock") + "</span>" +
         '<span class="goal__name">' + (win ? "당첨" : "꽝") + "</span>" +
         '<span class="goal__sub">' + (win ? "Win" : "Lose") + " · " + LABELS[i] + "</span>";
       goals.appendChild(d);

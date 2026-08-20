@@ -5,7 +5,9 @@
 (function () {
   "use strict";
 
-  var FACES = ["🐻", "🐱", "🐼", "🐰", "🦊", "🐯", "🐶", "🐨", "🦝", "🐷"];
+  var FACES = ["🐻", "🐱", "🐼", "🐰", "🦊", "🐯", "🐨", "🐸", "🐤", "🐙"];
+  var ARTS = ["ch-bear", "ch-cat", "ch-panda", "ch-rabbit", "ch-fox",
+              "ch-tiger", "ch-koala", "ch-frog", "ch-chick", "ch-octopus"];
   var TONES = ["#f7a8a8", "#fbcf86", "#f6e78a", "#b3e59c", "#9adae3",
                "#a6b6f2", "#d0aef0", "#f6adda", "#dcc6a8", "#b4c8dc"];
 
@@ -40,6 +42,31 @@
     var rad = (deg - 90) * Math.PI / 180;
     return [r * Math.cos(rad), r * Math.sin(rad)];
   }
+
+  /** 칸 가운데에 캐릭터 그림을 원형으로 잘라 얹습니다.
+      파일이 없으면 onerror 로 스스로 사라져 이모지가 남습니다. */
+  function addFaceArt(parent, artId, cx, cy, r, i) {
+    if (!artId || !global_Art) return;
+    var clipId = "faceClip" + i;
+    var clip = el("clipPath", { id: clipId });
+    clip.appendChild(el("circle", { cx: cx.toFixed(2), cy: cy.toFixed(2), r: r }));
+    parent.appendChild(clip);
+
+    var img = el("image", {
+      href: global_Art.url(artId),
+      x: (cx - r).toFixed(2), y: (cy - r).toFixed(2),
+      width: r * 2, height: r * 2,
+      "clip-path": "url(#" + clipId + ")",
+      preserveAspectRatio: "xMidYMid slice",
+    });
+    img.addEventListener("error", function () {
+      img.remove();
+      clip.remove();
+    });
+    parent.appendChild(img);
+  }
+
+  var global_Art = window.Art;
 
   /* ---------- 그리기 ---------- */
 
@@ -132,9 +159,10 @@
         transform: "rotate(" + mid.toFixed(2) + " " + np[0].toFixed(2) + " " + np[1].toFixed(2) + ")",
       }, String(i + 1)));
 
+      var rad = count > 8 ? 10 : 12;
       wheelGroup.appendChild(el("circle", {
         class: "slice__disc",
-        cx: fp[0].toFixed(2), cy: fp[1].toFixed(2), r: count > 8 ? 10 : 12,
+        cx: fp[0].toFixed(2), cy: fp[1].toFixed(2), r: rad,
       }));
       wheelGroup.appendChild(el("text", {
         class: "slice__face",
@@ -142,6 +170,9 @@
         "font-size": count > 8 ? 12 : 14,
         "text-anchor": "middle", "dominant-baseline": "central",
       }, FACES[i % FACES.length]));
+
+      /* 생성된 그림이 있으면 이모지 위에 원형으로 덮습니다 */
+      addFaceArt(wheelGroup, ARTS[i % ARTS.length], fp[0], fp[1], rad, i);
     }
 
     /* 고정된 광택 — 회전 그룹 바깥에 둡니다 */
@@ -177,7 +208,8 @@
     for (var i = 0; i < count; i++) {
       html +=
         '<div class="prow" style="--tone:' + TONES[i % TONES.length] + '">' +
-          '<span class="prow__face">' + FACES[i % FACES.length] + "</span>" +
+          '<span class="prow__face">' + FACES[i % FACES.length] +
+            Art.tag(ARTS[i % ARTS.length]) + "</span>" +
           '<span class="prow__name">Player ' + (i + 1) + "</span>" +
           '<span class="prow__no">' + (i + 1) + "</span>" +
         "</div>";
