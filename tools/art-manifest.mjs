@@ -12,11 +12,12 @@ export const STYLE = [
 ].join(", ");
 
 /* 캐릭터는 둥근 파스텔 배지 형태로 만듭니다.
-   투명 배경에 기대지 않아도 화면에 자연스럽게 얹히기 때문입니다. */
+   API 가 JPEG 만 내주기 때문에 투명 배경을 쓸 수 없는데,
+   원형 배지로 만들면 투명도가 없어도 화면에 자연스럽게 얹힙니다. */
 function character(id, animal, tone) {
   return {
     id,
-    out: `shared/art/${id}.png`,
+    out: `shared/art/${id}.jpg`,
     aspect: "1:1",
     size: "1K",
     prompt:
@@ -77,7 +78,7 @@ export const ART = [
   /* ---- 결과 아이콘 ---- */
   {
     id: "ic-trophy",
-    out: "shared/art/ic-trophy.png",
+    out: "shared/art/ic-trophy.jpg",
     aspect: "1:1",
     size: "1K",
     prompt:
@@ -87,7 +88,7 @@ export const ART = [
   },
   {
     id: "ic-rock",
-    out: "shared/art/ic-rock.png",
+    out: "shared/art/ic-rock.jpg",
     aspect: "1:1",
     size: "1K",
     prompt:
@@ -97,7 +98,7 @@ export const ART = [
   },
   {
     id: "ic-dino",
-    out: "shared/art/ic-dino.png",
+    out: "shared/art/ic-dino.jpg",
     aspect: "1:1",
     size: "1K",
     prompt:

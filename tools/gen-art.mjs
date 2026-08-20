@@ -94,13 +94,13 @@ function findImage(node, depth = 0) {
 /* ---------- 한 장 만들기 ---------- */
 
 async function generate(item) {
-  const wantsPng = item.out.endsWith(".png");
+  /* API 가 지원하는 형식은 JPEG 뿐입니다 (PNG 는 거부됩니다) */
   const body = {
     model: MODEL,
     input: [{ type: "text", text: `${STYLE}. ${item.prompt}` }],
     response_format: {
       type: "image",
-      mime_type: wantsPng ? "image/png" : "image/jpeg",
+      mime_type: "image/jpeg",
       aspect_ratio: item.aspect,
       image_size: item.size,
     },

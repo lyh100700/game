@@ -11,7 +11,7 @@
 
   global.Art = {
     url: function (id, ext) {
-      return base + "shared/art/" + id + "." + (ext || "png");
+      return base + "shared/art/" + id + "." + (ext || "jpg");
     },
 
     /** 이모지 위에 덮어씌울 <img> 태그. 파일이 없으면 스스로 사라집니다. */
