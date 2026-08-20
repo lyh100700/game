@@ -37,6 +37,11 @@
   flash.className = "flash";
   stage.appendChild(flash);
 
+  /* 이빨을 누를수록 화면 가장자리가 붉어지며 긴장감을 만듭니다 */
+  var vignette = document.createElement("div");
+  vignette.className = "vignette";
+  stage.appendChild(vignette);
+
   /* 입 닫힘 이미지를 미리 받아둡니다 — 결정적인 순간에 깜빡이면 안 되니까 */
   new Image().src = IMG_SHUT;
 
@@ -62,6 +67,8 @@
     stage.classList.remove("is-chomped");
     teethBox.classList.remove("is-quiet");
     countEl.textContent = "0";
+    vignette.style.setProperty("--tension", 0);
+    vignette.classList.remove("is-beating");
     popup.classList.remove("is-open");
     buildTeeth();
   }
@@ -113,12 +120,40 @@
     return "역대급 운입니다!";
   }
 
+  /** 남은 이빨이 적을수록 붉은 기운이 짙어집니다 */
+  function updateTension() {
+    var ratio = pressed / (TEETH.length - 1);
+    vignette.style.setProperty("--tension", (ratio * 0.85).toFixed(2));
+    vignette.classList.toggle("is-beating", ratio > 0.55);
+  }
+
+  /** 이빨이 들어갈 때 작은 조각이 튑니다 */
+  function crumbs(tooth) {
+    var box = stage.getBoundingClientRect();
+    var r = tooth.getBoundingClientRect();
+    var cx = ((r.left + r.width / 2 - box.left) / box.width) * 100;
+    var cy = ((r.top + r.height / 2 - box.top) / box.height) * 100;
+    for (var i = 0; i < 5; i++) {
+      var c = document.createElement("span");
+      c.className = "crumb";
+      c.style.left = cx + "%";
+      c.style.top = cy + "%";
+      c.style.setProperty("--cx", (Math.random() * 60 - 30) + "px");
+      c.style.setProperty("--cy", (-20 - Math.random() * 40) + "px");
+      c.style.animationDelay = (Math.random() * 0.06) + "s";
+      stage.appendChild(c);
+      setTimeout(function (n) { return function () { n.remove(); }; }(c), 700);
+    }
+  }
+
   function clear(tooth) {
     pressed++;
     tooth.classList.add("is-down");
     teethBox.classList.add("is-quiet");
     Sfx.play("tooth");
+    crumbs(tooth);
     bumpCount();
+    updateTension();
 
     /* 꽝 하나만 남으면 마지막까지 버틴 것 — 승리로 쳐줍니다 */
     if (pressed === TEETH.length - 1) {
@@ -130,6 +165,7 @@
         popText.textContent = "꽝 하나만 남기고 전부 눌렀어요. 대단한 운이에요!";
         popup.classList.add("is-open");
         Sfx.play("win");
+        Fx.confetti(document.getElementById("screen"), { x: 50, y: 40, count: 60 });
       }, 400);
     }
   }

@@ -43,9 +43,29 @@
     <!-- 조작 버튼 -->
     <div class="pads">
       <button class="pad pad--cloud" id="reset" type="button">
+        <svg class="pad__svg" viewBox="0 0 150 100" aria-hidden="true">
+          <!-- 같은 도형을 두 번 그립니다: 뒤에는 굵은 흰 선으로 테두리를, 앞에는 색을 채워 -->
+          <g class="pad__outline"><g class="cloudBody">
+        <circle cx="42" cy="46" r="24"/>
+        <circle cx="76" cy="36" r="30"/>
+        <circle cx="110" cy="50" r="22"/>
+        <rect x="18" y="52" width="114" height="30" rx="15"/>
+      </g></g>
+          <g class="pad__fill"><g class="cloudBody">
+        <circle cx="42" cy="46" r="24"/>
+        <circle cx="76" cy="36" r="30"/>
+        <circle cx="110" cy="50" r="22"/>
+        <rect x="18" y="52" width="114" height="30" rx="15"/>
+      </g></g>
+        </svg>
         <span class="pad__label">초기화</span>
       </button>
+
       <button class="pad pad--star" id="action" type="button">
+        <svg class="pad__svg" viewBox="0 0 100 100" aria-hidden="true">
+          <polygon class="star" points="50.00,3.00 62.05,33.42 94.70,35.48 69.50,56.33 77.63,88.02 50.00,70.50 22.37,88.02 30.50,56.33 5.30,35.48 37.95,33.42"/>
+          <polygon class="star__gloss" points="50.00,3.00 62.05,33.42 94.70,35.48 69.50,56.33 77.63,88.02 50.00,70.50 22.37,88.02 30.50,56.33 5.30,35.48 37.95,33.42"/>
+        </svg>
         <span class="pad__paw">🐾</span>
         <span class="pad__label" id="actionLabel">시작</span>
       </button>
@@ -86,6 +106,7 @@
 
   <script src="../shared/progress.js"></script>
   <script src="../shared/sound.js"></script>
+  <script src="../shared/fx.js"></script>
   <script src="game.js"></script>
 </body>
 </html>

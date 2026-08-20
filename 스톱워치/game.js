@@ -147,6 +147,7 @@
         format(records[1].ms) + " 의 " + b + " → " + total + ". " + grade(total).text;
       popup.classList.add("is-open");
       Sfx.play(total >= 40 ? "fanfare" : total === 0 ? "lose" : "win");
+      if (total >= 30) Fx.confetti(document.getElementById("screen"), { x: 50, y: 40, count: 50 });
     }, 800);
   }
 
@@ -205,5 +206,6 @@
   });
 
   Sfx.mountToggle(document.getElementById("screen"));
+  Fx.sparkles(document.querySelector(".sky"), 6, ["✨", "💫", "⭐"]);
   reset();
 })();

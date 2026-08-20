@@ -52,6 +52,7 @@
 
   render();
   Sfx.mountToggle(document.getElementById("screen"));
+  Fx.sparkles(document.querySelector(".main__deco"), 5, ["✨", "🍃", "⭐"]);
 
   /* 게임에서 돌아왔을 때 진행바를 최신으로 (뒤로가기 캐시 대응) */
   window.addEventListener("pageshow", render);

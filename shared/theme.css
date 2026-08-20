@@ -1,6 +1,9 @@
-/* ===== 공통 디자인 토큰 =====
-   메인 선택화면·앱아이콘의 색감을 기준으로 정리한 값입니다.
-   배경 이미지를 교체하려면 각 게임 style.css의 --bg-image 만 바꾸면 됩니다. */
+/* ===== 공통 디자인 시스템 =====
+   참고 이미지의 특징을 규칙으로 정리한 것입니다.
+     1) 모든 요소에 두꺼운 흰 테두리
+     2) 젤리처럼 안쪽 위는 밝고 아래는 어두운 입체감
+     3) 글자는 흰 외곽선 + 색 채움 + 아래로 떨어지는 그림자
+     4) 그림자는 흐린 것 하나가 아니라, 단단한 것 + 부드러운 것 두 겹 */
 
 :root {
   /* 배경 */
@@ -8,9 +11,9 @@
   --green-bg-deep: #8fc686;
   --cream: #fdf3dd;
   --cream-deep: #f5e6c8;
-  --paper: #f7f4ee;
+  --paper: #f9f5ec;
 
-  /* 파스텔 하늘 (스톱워치·룰렛 배경) */
+  /* 파스텔 하늘 */
   --sky-1: #ffd9ec;
   --sky-2: #d9c9f5;
   --sky-3: #c5e4f7;
@@ -18,46 +21,41 @@
 
   /* 글자 */
   --brown: #6b3f2a;
-  --brown-soft: #8a6047;
+  --brown-soft: #98705a;
   --white: #ffffff;
 
   /* 버튼 */
   --btn-green: #7ec24f;
-  --btn-green-deep: #5c9c35;
+  --btn-green-deep: #4e8f2c;
   --btn-blue: #7b93d8;
-  --btn-blue-deep: #5c73bb;
+  --btn-blue-deep: #4f66ad;
   --btn-pink: #f5a8c0;
+  --btn-pink-deep: #d4738f;
+  --btn-red: #e35b4c;
+  --btn-red-deep: #a83226;
 
   /* 테두리 · 그림자 */
-  --line: #c9a06a;
-  --line-soft: #e4cfa8;
-  --shadow-sm: 0 2px 0 rgba(107, 63, 42, .18);
-  --shadow-md: 0 6px 16px rgba(107, 63, 42, .18);
-  --shadow-lg: 0 12px 32px rgba(107, 63, 42, .24);
+  --line: #d8ab72;
+  --line-soft: #ecd9b4;
 
-  /* 캐릭터 파스텔 팔레트 (사다리·룰렛 공용) */
-  --c1: #f6a9a9;
-  --c2: #f9cf8e;
-  --c3: #f4e58c;
-  --c4: #b5e3a0;
-  --c5: #9fd8e0;
-  --c6: #a9b8ef;
-  --c7: #cfb0ec;
-  --c8: #f3b0d6;
-  --c9: #d6c3a8;
-  --c10: #b8c9d9;
+  /* 두 겹 그림자 — 단단한 아래턱 + 퍼지는 안개 */
+  --drop-sm: 0 3px 0 rgba(107, 63, 42, .22), 0 5px 10px rgba(107, 63, 42, .16);
+  --drop-md: 0 5px 0 rgba(107, 63, 42, .18), 0 10px 22px rgba(107, 63, 42, .22);
+  --drop-lg: 0 8px 0 rgba(107, 63, 42, .16), 0 20px 44px rgba(107, 63, 42, .3);
 
-  --radius: 18px;
-  --radius-lg: 26px;
+  /* 젤리 광택 — 버튼 안쪽에 겹쳐 쓰는 값 */
+  --gloss: inset 0 3px 0 rgba(255, 255, 255, .55), inset 0 -6px 0 rgba(0, 0, 0, .18);
+
+  /* 캐릭터 파스텔 팔레트 */
+  --c1: #f6a9a9; --c2: #f9cf8e; --c3: #f4e58c; --c4: #b5e3a0; --c5: #9fd8e0;
+  --c6: #a9b8ef; --c7: #cfb0ec; --c8: #f3b0d6; --c9: #d6c3a8; --c10: #b8c9d9;
+
+  --radius: 20px;
+  --radius-lg: 28px;
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-}
+html, body { margin: 0; padding: 0; height: 100%; }
 
 body {
   font-family: "Apple SD Gothic Neo", -apple-system, BlinkMacSystemFont,
@@ -67,7 +65,6 @@ body {
   user-select: none;
 }
 
-/* 세로형 화면 기준. 넓은 화면에서는 가운데 정렬된 폰 폭으로 고정 */
 .screen {
   position: relative;
   width: 100%;
@@ -77,34 +74,78 @@ body {
   overflow: hidden;
 }
 
-/* ===== 공통 버튼 ===== */
+/* ===== 사탕 글씨 =====
+   흰 외곽선을 글자 뒤로 돌리고(paint-order), 아래로 단단한 그림자를 답니다. */
+.candy {
+  -webkit-text-stroke: 6px var(--white);
+  paint-order: stroke fill;
+  text-shadow:
+    0 3px 0 var(--stroke2, rgba(0, 0, 0, .18)),
+    0 6px 12px rgba(107, 63, 42, .28);
+}
+
+/* ===== 젤리 버튼 ===== */
 .btn {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 14px 26px;
-  border: none;
+  padding: 15px 28px;
+  border: 4px solid var(--white);
   border-radius: 999px;
   font-family: inherit;
   font-size: 17px;
-  font-weight: 800;
+  font-weight: 900;
+  letter-spacing: -.01em;
   color: var(--white);
-  background: var(--btn-green);
-  box-shadow: inset 0 -4px 0 rgba(0, 0, 0, .16), var(--shadow-sm);
+  background: linear-gradient(180deg, #9ad86c 0%, var(--btn-green) 52%, var(--btn-green-deep) 100%);
+  box-shadow: var(--gloss), var(--drop-md);
+  text-shadow: 0 2px 0 rgba(0, 0, 0, .22);
   cursor: pointer;
-  transition: transform .1s ease, filter .1s ease;
+  transition: transform .12s cubic-bezier(.2, 1.4, .5, 1), filter .12s ease;
 }
-.btn:active { transform: translateY(3px); box-shadow: inset 0 -1px 0 rgba(0,0,0,.16); }
-.btn:disabled { filter: grayscale(.5) opacity(.6); cursor: default; }
-.btn--blue { background: var(--btn-blue); }
+/* 위쪽에 얹히는 하이라이트 — 젤리 느낌의 핵심입니다 */
+.btn::before {
+  content: "";
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  top: 5px;
+  height: 34%;
+  border-radius: 999px;
+  background: linear-gradient(rgba(255, 255, 255, .6), rgba(255, 255, 255, 0));
+  pointer-events: none;
+}
+.btn:active { transform: translateY(5px); box-shadow: var(--gloss), 0 1px 0 rgba(107,63,42,.22); }
+.btn:disabled { filter: grayscale(.55) opacity(.55); cursor: default; }
+
+.btn--blue {
+  background: linear-gradient(180deg, #a3b6ee 0%, var(--btn-blue) 52%, var(--btn-blue-deep) 100%);
+}
+.btn--pink {
+  background: linear-gradient(180deg, #ffc4d6 0%, var(--btn-pink) 52%, var(--btn-pink-deep) 100%);
+}
+.btn--red {
+  background: linear-gradient(180deg, #f5877a 0%, var(--btn-red) 52%, var(--btn-red-deep) 100%);
+}
 .btn--ghost {
-  background: #e8eefb;
+  background: linear-gradient(180deg, #ffffff 0%, #eef2fb 52%, #d5ddf0 100%);
   color: var(--btn-blue-deep);
-  box-shadow: inset 0 -4px 0 rgba(0,0,0,.08), var(--shadow-sm);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, .9);
+  box-shadow: inset 0 3px 0 rgba(255,255,255,.9), inset 0 -5px 0 rgba(120,140,190,.28), var(--drop-md);
 }
 
-/* ===== 상단 바 (게임 화면 공통) ===== */
+/* ===== 패널 · 카드 ===== */
+.panel {
+  position: relative;
+  border: 4px solid var(--white);
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, #fffaf0, var(--cream-deep));
+  box-shadow: inset 0 2px 0 rgba(255,255,255,.9), var(--drop-md);
+}
+
+/* ===== 상단 바 ===== */
 .topbar {
   position: relative;
   z-index: 5;
@@ -116,28 +157,42 @@ body {
 .topbar__back {
   display: grid;
   place-items: center;
-  width: 42px;
-  height: 42px;
-  flex: 0 0 42px;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, .82);
+  width: 46px;
+  height: 46px;
+  flex: 0 0 46px;
+  border: 3px solid var(--white);
+  border-radius: 16px;
+  background: linear-gradient(180deg, #ffffff, #eae2f2);
   color: var(--brown);
   font-size: 22px;
-  text-decoration: none;
-  box-shadow: var(--shadow-sm);
-}
-.topbar__title {
-  margin: 0;
-  font-size: 22px;
   font-weight: 900;
-  letter-spacing: -.02em;
+  text-decoration: none;
+  box-shadow: var(--drop-sm);
+  transition: transform .12s ease;
 }
-.topbar__sub {
-  margin: 0;
-  font-size: 12px;
-  font-weight: 700;
-  opacity: .7;
+.topbar__back:active { transform: translateY(3px); }
+.topbar__title { margin: 0; font-size: 23px; font-weight: 900; letter-spacing: -.02em; }
+.topbar__sub { margin: 1px 0 0; font-size: 12px; font-weight: 800; opacity: .72; }
+
+/* ===== 효과음 토글 ===== */
+.sfxBtn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 30;
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  border: 3px solid var(--white);
+  border-radius: 16px;
+  background: linear-gradient(180deg, #ffffff, #eae2f2);
+  font-size: 19px;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: var(--drop-sm);
+  transition: transform .12s ease;
 }
+.sfxBtn:active { transform: translateY(3px); }
 
 /* ===== 팝업 ===== */
 .popup {
@@ -147,67 +202,119 @@ body {
   display: grid;
   place-items: center;
   padding: 24px;
-  background: rgba(60, 35, 22, .45);
-  backdrop-filter: blur(3px);
+  background: rgba(60, 35, 22, .5);
+  backdrop-filter: blur(4px);
   opacity: 0;
   pointer-events: none;
   transition: opacity .25s ease;
 }
 .popup.is-open { opacity: 1; pointer-events: auto; }
-.popup__box {
-  width: 100%;
-  max-width: 320px;
-  padding: 28px 24px 24px;
-  border: 3px solid var(--line);
-  border-radius: var(--radius-lg);
-  background: var(--cream);
-  text-align: center;
-  box-shadow: var(--shadow-lg);
-  transform: scale(.85);
-  transition: transform .25s cubic-bezier(.2, 1.4, .5, 1);
-}
-.popup.is-open .popup__box { transform: scale(1); }
-.popup__emoji { font-size: 56px; line-height: 1; }
-.popup__title { margin: 12px 0 6px; font-size: 26px; font-weight: 900; }
-.popup__text { margin: 0 0 20px; font-size: 15px; font-weight: 600; color: var(--brown-soft); }
 
-/* 흔들림 · 팝 애니메이션 */
+.popup__box {
+  position: relative;
+  width: 100%;
+  max-width: 330px;
+  padding: 30px 24px 24px;
+  border: 5px solid var(--white);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(180deg, #fffaf0 0%, var(--cream) 55%, var(--cream-deep) 100%);
+  text-align: center;
+  box-shadow: inset 0 3px 0 rgba(255,255,255,.9), var(--drop-lg);
+  transform: scale(.8) translateY(14px);
+  transition: transform .32s cubic-bezier(.2, 1.5, .45, 1);
+}
+.popup.is-open .popup__box { transform: scale(1) translateY(0); }
+
+/* 팝업 둘레의 점선 장식 */
+.popup__box::after {
+  content: "";
+  position: absolute;
+  inset: 7px;
+  border: 2px dashed rgba(216, 171, 114, .5);
+  border-radius: calc(var(--radius-lg) - 8px);
+  pointer-events: none;
+}
+.popup__emoji {
+  font-size: 62px;
+  line-height: 1;
+  filter: drop-shadow(0 6px 8px rgba(107, 63, 42, .3));
+  animation: bounceIn .5s cubic-bezier(.2, 1.6, .4, 1);
+}
+.popup__title {
+  margin: 12px 0 6px;
+  font-size: 28px;
+  font-weight: 900;
+  color: #e2699a;
+  -webkit-text-stroke: 5px var(--white);
+  paint-order: stroke fill;
+  text-shadow: 0 3px 0 rgba(226, 105, 154, .28);
+}
+.popup__text { margin: 0 0 20px; font-size: 15px; font-weight: 700; color: var(--brown-soft); line-height: 1.5; }
+.popup__home {
+  display: block;
+  margin-top: 14px;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--brown-soft);
+  text-decoration: none;
+  opacity: .85;
+}
+
+/* ===== 반짝임 장식 ===== */
+.twinkle {
+  position: absolute;
+  pointer-events: none;
+  animation: twinkle 2.6s ease-in-out infinite;
+}
+@keyframes twinkle {
+  0%, 100% { opacity: .25; transform: scale(.8) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.15) rotate(18deg); }
+}
+
+/* ===== 공통 애니메이션 ===== */
 @keyframes shake {
   0%, 100% { transform: translate(0, 0) rotate(0); }
-  20% { transform: translate(-8px, 4px) rotate(-1.5deg); }
-  40% { transform: translate(7px, -3px) rotate(1.5deg); }
-  60% { transform: translate(-5px, 2px) rotate(-1deg); }
-  80% { transform: translate(4px, -2px) rotate(.8deg); }
+  20% { transform: translate(-9px, 5px) rotate(-1.8deg); }
+  40% { transform: translate(8px, -4px) rotate(1.8deg); }
+  60% { transform: translate(-6px, 3px) rotate(-1.2deg); }
+  80% { transform: translate(5px, -2px) rotate(.9deg); }
 }
 @keyframes pop {
   0% { transform: scale(.4); opacity: 0; }
-  70% { transform: scale(1.15); opacity: 1; }
+  70% { transform: scale(1.18); opacity: 1; }
   100% { transform: scale(1); opacity: 1; }
+}
+@keyframes bounceIn {
+  0% { transform: scale(.3) translateY(20px); opacity: 0; }
+  55% { transform: scale(1.2) translateY(-6px); opacity: 1; }
+  75% { transform: scale(.94) translateY(2px); }
+  100% { transform: scale(1) translateY(0); }
 }
 @keyframes float {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
+  50% { transform: translateY(-9px); }
+}
+@keyframes wobble {
+  0%, 100% { transform: rotate(-2.5deg); }
+  50% { transform: rotate(2.5deg); }
 }
 
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
 
-/* ===== 효과음 토글 버튼 ===== */
-.sfxBtn {
+/* ===== 색종이 ===== */
+.fxLayer { position: absolute; inset: 0; z-index: 45; pointer-events: none; overflow: hidden; }
+.fxBit {
   position: absolute;
-  top: 16px;
-  right: 16px;
-  z-index: 30;
-  width: 42px;
-  height: 42px;
-  padding: 0;
-  border: none;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, .82);
-  font-size: 19px;
-  line-height: 1;
-  cursor: pointer;
-  box-shadow: var(--shadow-sm);
+  display: block;
+  opacity: 0;
+  animation-name: confetti;
+  animation-timing-function: cubic-bezier(.15, .6, .5, 1);
+  animation-fill-mode: forwards;
 }
-.sfxBtn:active { transform: translateY(2px); }
+@keyframes confetti {
+  0%   { opacity: 1; transform: translate(-50%, -50%) rotate(0deg) scale(.5); }
+  15%  { opacity: 1; transform: translate(calc(-50% + var(--dx) * .45), calc(-50% + var(--dy) * -.25)) rotate(calc(var(--rot) * .3)) scale(1.1); }
+  100% { opacity: 0; transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) rotate(var(--rot)) scale(.85); }
+}

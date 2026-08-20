@@ -2,7 +2,7 @@
    앱을 한 번 열면 파일을 폰에 저장해 두고, 다음부터는 인터넷 없이도 실행됩니다.
    내용을 고친 뒤에는 아래 VERSION 숫자를 반드시 올리세요. 그래야 갱신됩니다. */
 
-const VERSION = 1;
+const VERSION = 2;
 const CACHE = "cutegames-v" + VERSION;
 
 const ASSETS = [
@@ -21,6 +21,7 @@ const ASSETS = [
   "./shared/theme.css",
   "./shared/progress.js",
   "./shared/sound.js",
+  "./shared/fx.js",
 
   "./이빨/index.html",
   "./이빨/style.css",
