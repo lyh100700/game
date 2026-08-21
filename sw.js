@@ -2,7 +2,7 @@
    앱을 한 번 열면 파일을 폰에 저장해 두고, 다음부터는 인터넷 없이도 실행됩니다.
    내용을 고친 뒤에는 아래 VERSION 숫자를 반드시 올리세요. 그래야 갱신됩니다. */
 
-const VERSION = 8;
+const VERSION = 9;
 const CACHE = "cutegames-v" + VERSION;
 
 const ASSETS = [
@@ -84,16 +84,16 @@ const ASSETS = [
   "./룰렛/index.html",
   "./룰렛/style.css",
   "./룰렛/game.js",
-  "./룰렛/faces/f01.png",
-  "./룰렛/faces/f02.png",
-  "./룰렛/faces/f03.png",
-  "./룰렛/faces/f04.png",
-  "./룰렛/faces/f05.png",
-  "./룰렛/faces/f06.png",
-  "./룰렛/faces/f07.png",
-  "./룰렛/faces/f08.png",
-  "./룰렛/faces/f09.png",
-  "./룰렛/faces/f10.png",
+  "./룰렛/faces/p01.png",
+  "./룰렛/faces/p02.png",
+  "./룰렛/faces/p03.png",
+  "./룰렛/faces/p04.png",
+  "./룰렛/faces/p05.png",
+  "./룰렛/faces/p06.png",
+  "./룰렛/faces/p07.png",
+  "./룰렛/faces/p08.png",
+  "./룰렛/faces/p09.png",
+  "./룰렛/faces/p10.png",
 ];
 
 self.addEventListener("install", (e) => {

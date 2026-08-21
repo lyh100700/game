@@ -5,12 +5,12 @@
 (function () {
   "use strict";
 
-  /* 칸에 들어가는 캐릭터는 룰렛 그림에서 오려낸 얼굴입니다.
-     tools/wheel-faces.py 가 만든 faces/f01.png ~ f10.png 를 씁니다.
-     번호는 12시 방향부터 시계방향으로 1..10 입니다. */
-  var NAMES = ["곰", "고양이", "판다", "토끼", "호랑이",
-               "강아지", "여우", "코알라", "너구리", "아기여우"];
-  var EMOJI = ["🐻", "🐱", "🐼", "🐰", "🐯", "🐶", "🦊", "🐨", "🦝", "🦊"];
+  /* 참가자 캐릭터 10종. "룰렛 플레이어화면.png" 에서 오려낸 배지 그림으로,
+     룰렛 칸과 참가자 목록에 똑같이 쓰입니다 (tools/wheel-faces.py).
+     칸 번호는 12시 방향부터 시계방향으로 1..10 입니다. */
+  var NAMES = ["곰", "고양이", "판다", "토끼", "여우",
+               "호랑이", "강아지", "코알라", "너구리", "부엉이"];
+  var EMOJI = ["🐻", "🐱", "🐼", "🐰", "🦊", "🐯", "🐶", "🐨", "🦝", "🦉"];
 
   /* 칸 색 — 원본 그림의 오로라빛 파스텔을 두 색 그라데이션으로 옮긴 값 */
   var TONES = [
@@ -22,7 +22,7 @@
 
   function faceSrc(i) {
     var n = (i % 10) + 1;
-    return "faces/f" + (n < 10 ? "0" : "") + n + ".png";
+    return "faces/p" + (n < 10 ? "0" : "") + n + ".png";
   }
 
   var SPIN_MS = 4800;
@@ -59,38 +59,33 @@
     return [r * Math.cos(rad), r * Math.sin(rad)];
   }
 
-  /** 칸 가운데에 캐릭터 얼굴을 동그랗게 얹습니다. */
+  /** 칸 가운데에 캐릭터 배지를 얹습니다. 그림은 모서리가 이미 둥글게 잘려 있어
+      뒤에 흰 사각형만 깔면 참가자 목록과 같은 모양이 됩니다.
+      숫자와 달리 배지는 돌리지 않습니다 — 아래쪽 칸이 뒤집혀 보이기 때문입니다. */
   function addFace(parent, i, cx, cy, r) {
-    var clipId = "faceClip" + i;
-    var clip = el("clipPath", { id: clipId });
-    clip.appendChild(el("circle", { cx: cx.toFixed(2), cy: cy.toFixed(2), r: r }));
-    parent.appendChild(clip);
-
-    parent.appendChild(el("circle", {
-      cx: cx.toFixed(2), cy: cy.toFixed(2), r: r + 1.3,
-      fill: "#fffdf8", opacity: ".95",
+    var g = el("g");
+    g.appendChild(el("rect", {
+      x: (cx - r - 1.6).toFixed(2), y: (cy - r - 1.6).toFixed(2),
+      width: ((r + 1.6) * 2).toFixed(2), height: ((r + 1.6) * 2).toFixed(2),
+      rx: ((r + 1.6) * 0.3).toFixed(2),
+      fill: "#fffdf8", opacity: ".96",
     }));
     var img = el("image", {
       href: faceSrc(i),
       x: (cx - r).toFixed(2), y: (cy - r).toFixed(2),
       width: (r * 2).toFixed(2), height: (r * 2).toFixed(2),
-      "clip-path": "url(#" + clipId + ")",
-      preserveAspectRatio: "xMidYMid slice",
     });
     img.addEventListener("error", function () {
       img.remove();
       /* 그림이 없으면 이모지로 물러납니다 */
-      parent.appendChild(el("text", {
+      g.appendChild(el("text", {
         class: "slice__face", x: cx.toFixed(2), y: cy.toFixed(2),
         "font-size": (r * 1.5).toFixed(1),
         "text-anchor": "middle", "dominant-baseline": "central",
       }, EMOJI[i % EMOJI.length]));
     });
-    parent.appendChild(img);
-    parent.appendChild(el("circle", {
-      cx: cx.toFixed(2), cy: cy.toFixed(2), r: r,
-      fill: "none", stroke: "#ffffff", "stroke-width": 1.6, opacity: ".9",
-    }));
+    g.appendChild(img);
+    parent.appendChild(g);
   }
 
   /* ---------- 그리기 ---------- */
@@ -209,7 +204,7 @@
         transform: "rotate(" + mid.toFixed(2) + " " + np[0].toFixed(2) + " " + np[1].toFixed(2) + ")",
       }, String(i + 1)));
 
-      addFace(wheelGroup, i, fp[0], fp[1], count > 8 ? 12 : 14.5);
+      addFace(wheelGroup, i, fp[0], fp[1], count > 8 ? 12.5 : 15);
     }
 
     /* 고정된 광택 — 회전 그룹 바깥에 둡니다 */
