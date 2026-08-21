@@ -209,12 +209,15 @@
     if (!action.disabled) action.click();
   });
 
-  /* 마스코트에 생성 그림이 있으면 얹습니다 (없으면 이모지 그대로) */
-  if (window.Art) {
-    var buddyArt = { "buddy--a": "ch-cat", "buddy--b": "ch-bear" };
-    Object.keys(buddyArt).forEach(function (cls) {
-      var el = document.querySelector("." + cls);
-      if (el) el.insertAdjacentHTML("beforeend", Art.tag(buddyArt[cls]));
+  /* 옆에 서 있는 친구 둘 — 들어올 때마다 캐릭터 13종 중에서 새로 뽑습니다.
+     둥실거리는 움직임은 CSS 가 맡으므로 그림만 갈아 끼우면 됩니다. */
+  if (window.Chars) {
+    var pair = Chars.pick(2);
+    ["buddy--a", "buddy--b"].forEach(function (cls, n) {
+      var box = document.querySelector("." + cls);
+      if (!box) return;
+      box.innerHTML = pair[n].emoji + Chars.tag(pair[n].id);
+      box.title = pair[n].ko;
     });
   }
 

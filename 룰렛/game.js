@@ -5,12 +5,12 @@
 (function () {
   "use strict";
 
-  /* 참가자 캐릭터 10종. "룰렛 플레이어화면.png" 에서 오려낸 배지 그림으로,
-     룰렛 칸과 참가자 목록에 똑같이 쓰입니다 (tools/wheel-faces.py).
+  /* 참가자 캐릭터 10종. 캐릭터 13종(shared/chars.js) 중에서 고른 것으로,
+     룰렛 칸과 참가자 목록에 똑같이 쓰입니다.
      칸 번호는 12시 방향부터 시계방향으로 1..10 입니다. */
-  var NAMES = ["곰", "고양이", "판다", "토끼", "여우",
-               "호랑이", "강아지", "코알라", "너구리", "부엉이"];
-  var EMOJI = ["🐻", "🐱", "🐼", "🐰", "🦊", "🐯", "🐶", "🐨", "🦝", "🦉"];
+  var CAST = ["rabbit", "cat", "penguin", "panda", "unicorn",
+              "bear", "axolotl", "frog", "sloth", "koala"]
+    .map(function (id) { return Chars.get(id); });
 
   /* 칸 색 — 원본 그림의 오로라빛 파스텔을 두 색 그라데이션으로 옮긴 값 */
   var TONES = [
@@ -20,10 +20,7 @@
     ["#c9a9eb", "#f5b9d3"],
   ];
 
-  function faceSrc(i) {
-    var n = (i % 10) + 1;
-    return "faces/p" + (n < 10 ? "0" : "") + n + ".png";
-  }
+  function who(i) { return CAST[i % CAST.length]; }
 
   var SPIN_MS = 4800;
   var MIN_TURNS = 5, MAX_TURNS = 8;
@@ -59,30 +56,25 @@
     return [r * Math.cos(rad), r * Math.sin(rad)];
   }
 
-  /** 칸 가운데에 캐릭터 배지를 얹습니다. 그림은 모서리가 이미 둥글게 잘려 있어
-      뒤에 흰 사각형만 깔면 참가자 목록과 같은 모양이 됩니다.
-      숫자와 달리 배지는 돌리지 않습니다 — 아래쪽 칸이 뒤집혀 보이기 때문입니다. */
+  /** 칸 바깥쪽에 캐릭터를 얹습니다.
+      숫자와 달리 캐릭터는 돌리지 않습니다 — 아래쪽 칸이 뒤집혀 보이기 때문입니다. */
   function addFace(parent, i, cx, cy, r) {
-    var g = el("g");
-    g.appendChild(el("rect", {
-      x: (cx - r - 1.6).toFixed(2), y: (cy - r - 1.6).toFixed(2),
-      width: ((r + 1.6) * 2).toFixed(2), height: ((r + 1.6) * 2).toFixed(2),
-      rx: ((r + 1.6) * 0.3).toFixed(2),
-      fill: "#fffdf8", opacity: ".96",
-    }));
+    var c = who(i);
+    var g = el("g", { class: "slice__char" });
     var img = el("image", {
-      href: faceSrc(i),
+      href: Chars.url(c.id),
       x: (cx - r).toFixed(2), y: (cy - r).toFixed(2),
       width: (r * 2).toFixed(2), height: (r * 2).toFixed(2),
+      preserveAspectRatio: "xMidYMid meet",
     });
     img.addEventListener("error", function () {
       img.remove();
       /* 그림이 없으면 이모지로 물러납니다 */
       g.appendChild(el("text", {
         class: "slice__face", x: cx.toFixed(2), y: cy.toFixed(2),
-        "font-size": (r * 1.5).toFixed(1),
+        "font-size": (r * 1.6).toFixed(1),
         "text-anchor": "middle", "dominant-baseline": "central",
-      }, EMOJI[i % EMOJI.length]));
+      }, c.emoji));
     });
     g.appendChild(img);
     parent.appendChild(g);
@@ -191,20 +183,22 @@
         fill: "url(#secG" + (i % TONES.length) + ")",
       }));
 
+      /* 참고 화면과 달리 숫자를 안쪽, 캐릭터를 바깥쪽에 둡니다.
+         칸은 바깥으로 갈수록 넓어서, 큰 캐릭터가 바깥에 있어야 칸 안에 다 들어갑니다. */
       var mid = a0 + step / 2;
-      var np = pt(mid, R * 0.84);
-      var fp = pt(mid, R * 0.53);
+      var np = pt(mid, R * 0.45);
+      var fp = pt(mid, R * 0.74);
 
       /* 숫자는 바깥쪽, 얼굴은 그 안쪽에 */
       wheelGroup.appendChild(el("text", {
         class: "slice__num",
         x: np[0].toFixed(2), y: np[1].toFixed(2),
-        "font-size": count > 8 ? 16 : 19,
+        "font-size": count > 8 ? 15 : 19,
         "text-anchor": "middle", "dominant-baseline": "central",
         transform: "rotate(" + mid.toFixed(2) + " " + np[0].toFixed(2) + " " + np[1].toFixed(2) + ")",
       }, String(i + 1)));
 
-      addFace(wheelGroup, i, fp[0], fp[1], count > 8 ? 12.5 : 15);
+      addFace(wheelGroup, i, fp[0], fp[1], count > 8 ? 13 : 16);
     }
 
     /* 고정된 광택 — 회전 그룹 바깥에 둡니다 */
@@ -246,12 +240,12 @@
     var html = "";
     for (var i = 0; i < count; i++) {
       var t = TONES[i % TONES.length];
+      var c = who(i);
       html +=
         '<div class="prow" style="--t1:' + t[0] + ";--t2:" + t[1] + '">' +
-          '<span class="prow__face">' + EMOJI[i % EMOJI.length] +
-            '<img class="prow__img" src="' + faceSrc(i) + '" alt="" onerror="this.remove()">' +
-          "</span>" +
+          '<span class="prow__face">' + c.emoji + Chars.tag(c.id) + "</span>" +
           '<span class="prow__name">Player ' + (i + 1) + "</span>" +
+          '<span class="prow__ko">' + c.ko + "</span>" +
         "</div>";
     }
     box.innerHTML = html;
@@ -319,12 +313,11 @@
     Fx.confetti(screen, { x: 50, y: 42, count: 54 });
 
     setTimeout(function () {
-      document.getElementById("popEmoji").innerHTML =
-        EMOJI[winner % EMOJI.length] +
-        '<img class="popup__face" src="' + faceSrc(winner) + '" alt="" onerror="this.remove()">';
+      var c = who(winner);
+      document.getElementById("popEmoji").innerHTML = c.emoji + Chars.tag(c.id);
       document.getElementById("popTitle").textContent = "Player " + (winner + 1) + " 당첨!";
       document.getElementById("popText").textContent =
-        count + "명 중 " + (winner + 1) + "번(" + NAMES[winner % NAMES.length] + ") 칸이 뽑혔어요. 🎊";
+        count + "명 중 " + (winner + 1) + "번(" + c.ko + ") 칸이 뽑혔어요. 🎊";
       popup.classList.add("is-open");
       Sfx.play("coin");
     }, 600);

@@ -134,6 +134,8 @@ body { background: var(--paper); }
   stroke-width: 1.5;
   filter: drop-shadow(0 3px 4px rgba(0, 0, 0, .3));
 }
+/* 내려가는 말의 캐릭터 그림 — 위쪽 플레이어와 같은 그림입니다 */
+.token__img { pointer-events: none; }
 
 /* ---- 하단 조작부 ---- */
 .controls {
@@ -184,12 +186,8 @@ body { background: var(--paper); }
 }
 
 
-/* 생성 그림은 저마다 배경색이 달라 그대로 쓰면 줄이 어수선해 보입니다.
-   조금 확대해 동물이 원을 채우게 하고, 흰 테두리로 묶어 한 세트처럼 보이게 합니다. */
-.node__face .artImg,
-.goal__icon .artImg {
-  transform: scale(1.22);
-}
+/* 캐릭터 그림은 배경이 없어 그대로 얹습니다. 동그라미 색이 뒤에서 비칩니다. */
+.node__face .charImg { inset: 8%; width: 84%; height: 84%; }
 .node__face::after {
   content: "";
   position: absolute;
@@ -204,3 +202,6 @@ body { background: var(--paper); }
 
 /* 직접 그린 조약돌 */
 .pebble { width: 30px; height: 30px; filter: drop-shadow(0 2px 2px rgba(0,0,0,.18)); }
+
+/* 결과 팝업의 당첨 캐릭터 */
+.ladder #popEmoji { position: relative; width: 84px; height: 84px; margin: 0 auto; }

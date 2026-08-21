@@ -4,10 +4,10 @@
 (function () {
   "use strict";
 
-  var FACES = ["🐻", "🐸", "🐧", "🐶", "🐰", "🐱", "🐼", "🦊"];
-  /* 같은 순서의 생성 그림. 파일이 없으면 위 이모지가 그대로 쓰입니다. */
-  var ARTS = ["ch-bear", "ch-frog", "ch-penguin", "ch-dog",
-              "ch-rabbit", "ch-cat", "ch-panda", "ch-fox"];
+  /* 캐릭터 8종. 캐릭터 13종(shared/chars.js) 중에서 고른 것입니다.
+     위쪽 플레이어와 사다리를 타고 내려가는 그림이 같은 캐릭터를 씁니다. */
+  var CAST = ["penguin", "dino", "cat", "dog", "koala", "unicorn", "fox", "rabbit"]
+    .map(function (id) { return Chars.get(id); });
   var TONES = ["#e8c9a8", "#bfe8b4", "#e6efa8", "#b9d5f2", "#f7c8dd", "#bfe4ee", "#dcd6f2", "#f6cdaa"];
   var LINES = ["#8fd3a4", "#a9b8ef", "#f6a9c0", "#7fd6d1", "#c3e07a", "#f2c07a", "#c9a9e8", "#8fc7ee"];
   var LABELS = ["A", "B", "C", "D", "E", "F", "G", "H"];
@@ -203,7 +203,7 @@
       b.style.left = g.xPct(i) + "%";
       b.style.setProperty("--tone", TONES[i]);
       b.innerHTML =
-        '<span class="node__face">' + FACES[i] + Art.tag(ARTS[i]) + "</span>" +
+        '<span class="node__face">' + CAST[i].emoji + Chars.tag(CAST[i].id) + "</span>" +
         '<span class="node__label">' + LABELS[i] + "</span>";
       heads.appendChild(b);
 
@@ -237,16 +237,41 @@
     });
     svg.appendChild(trace);
 
+    /* 내려가는 말 — 위쪽 플레이어와 같은 캐릭터 그림을 씁니다.
+       그림을 못 불러오면 이모지 글자로 물러납니다. */
+    var TR = 16;
     var tokenG = el("g", { class: "tokenG" });
-    var disc = el("circle", { class: "token__disc", cx: info.pts[0][0], cy: info.pts[0][1], r: 15 });
-    var token = el("text", {
-      class: "token", x: info.pts[0][0], y: info.pts[0][1],
-      "text-anchor": "middle", "dominant-baseline": "central", "font-size": 20,
+    var disc = el("circle", { class: "token__disc", cx: info.pts[0][0], cy: info.pts[0][1], r: TR });
+    var token = el("image", {
+      class: "token__img",
+      href: Chars.url(CAST[i].id),
+      x: info.pts[0][0] - TR, y: info.pts[0][1] - TR,
+      width: TR * 2, height: TR * 2,
+      preserveAspectRatio: "xMidYMid meet",
     });
-    token.textContent = FACES[i];
+    token.addEventListener("error", function () {
+      token.remove();
+      token = el("text", {
+        class: "token", x: info.pts[0][0], y: info.pts[0][1],
+        "text-anchor": "middle", "dominant-baseline": "central", "font-size": 20,
+      });
+      token.textContent = CAST[i].emoji;
+      tokenG.appendChild(token);
+    });
     tokenG.appendChild(disc);
     tokenG.appendChild(token);
     svg.appendChild(tokenG);
+
+    /** 글자든 그림이든 같은 방식으로 옮깁니다 */
+    function moveToken(x, y) {
+      if (token.tagName === "image") {
+        token.setAttribute("x", x - TR);
+        token.setAttribute("y", y - TR);
+      } else {
+        token.setAttribute("x", x);
+        token.setAttribute("y", y);
+      }
+    }
 
     var total = trace.getTotalLength();
     trace.setAttribute("stroke-dasharray", total);
@@ -277,8 +302,7 @@
 
       trace.setAttribute("stroke-dashoffset", total - len);
       var pt = trace.getPointAtLength(len);
-      token.setAttribute("x", pt.x);
-      token.setAttribute("y", pt.y);
+      moveToken(pt.x, pt.y);
       disc.setAttribute("cx", pt.x);
       disc.setAttribute("cy", pt.y);
 
@@ -335,7 +359,7 @@
       x.textContent = "당첨은 " + LABELS[winGoal] + " 자리에 있었어요.";
       Sfx.play("lose");
     } else {
-      e.textContent = FACES[winnerIdx];
+      e.innerHTML = CAST[winnerIdx].emoji + Chars.tag(CAST[winnerIdx].id);
       t.textContent = "당첨!";
       Fx.confetti(document.getElementById("screen"), { x: 50, y: 45, count: 52 });
       x.textContent = LABELS[winnerIdx] + " 캐릭터가 당첨됐어요! 🏆";

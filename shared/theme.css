@@ -335,3 +335,15 @@ body {
   border-radius: inherit;
   pointer-events: none;
 }
+
+/* ===== 캐릭터 그림 (shared/art/char/) =====
+   투명 PNG 라서 잘라내지 않고 통째로 보여 줍니다.
+   파일이 없으면 onerror 로 사라져 밑에 깔린 이모지가 남습니다. */
+.charImg {
+  position: absolute;
+  inset: 6%;
+  width: 88%;
+  height: 88%;
+  object-fit: contain;
+  pointer-events: none;
+}

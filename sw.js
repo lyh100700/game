@@ -2,7 +2,7 @@
    앱을 한 번 열면 파일을 폰에 저장해 두고, 다음부터는 인터넷 없이도 실행됩니다.
    내용을 고친 뒤에는 아래 VERSION 숫자를 반드시 올리세요. 그래야 갱신됩니다. */
 
-const VERSION = 9;
+const VERSION = 10;
 const CACHE = "cutegames-v" + VERSION;
 
 const ASSETS = [
@@ -23,6 +23,20 @@ const ASSETS = [
   "./shared/sound.js",
   "./shared/fx.js",
   "./shared/art.js",
+  "./shared/chars.js",
+  "./shared/art/char/axolotl.png",
+  "./shared/art/char/bear.png",
+  "./shared/art/char/cat.png",
+  "./shared/art/char/dino.png",
+  "./shared/art/char/dog.png",
+  "./shared/art/char/fox.png",
+  "./shared/art/char/frog.png",
+  "./shared/art/char/koala.png",
+  "./shared/art/char/panda.png",
+  "./shared/art/char/penguin.png",
+  "./shared/art/char/rabbit.png",
+  "./shared/art/char/sloth.png",
+  "./shared/art/char/unicorn.png",
   "./shared/art/bg-forest.svg",
   "./shared/art/bg-leaves.svg",
   "./shared/art/thumb-dino.jpg",
@@ -35,16 +49,6 @@ const ASSETS = [
   "./shared/art/watch-cloud.png",
   "./shared/art/bg-clouds.svg",
   "./shared/art/bg-paper.svg",
-  "./shared/art/ch-bear.jpg",
-  "./shared/art/ch-cat.jpg",
-  "./shared/art/ch-panda.jpg",
-  "./shared/art/ch-rabbit.jpg",
-  "./shared/art/ch-fox.jpg",
-  "./shared/art/ch-tiger.jpg",
-  "./shared/art/ch-pig.jpg",
-  "./shared/art/ch-frog.jpg",
-  "./shared/art/ch-penguin.jpg",
-  "./shared/art/ch-dog.jpg",
 
   "./이빨/index.html",
   "./이빨/style.css",
@@ -84,16 +88,6 @@ const ASSETS = [
   "./룰렛/index.html",
   "./룰렛/style.css",
   "./룰렛/game.js",
-  "./룰렛/faces/p01.png",
-  "./룰렛/faces/p02.png",
-  "./룰렛/faces/p03.png",
-  "./룰렛/faces/p04.png",
-  "./룰렛/faces/p05.png",
-  "./룰렛/faces/p06.png",
-  "./룰렛/faces/p07.png",
-  "./룰렛/faces/p08.png",
-  "./룰렛/faces/p09.png",
-  "./룰렛/faces/p10.png",
 ];
 
 self.addEventListener("install", (e) => {

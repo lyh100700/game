@@ -287,8 +287,8 @@ body { background: #efe0f2; }
   position: absolute;
   display: grid;
   place-items: center;
-  width: 66px;
-  height: 66px;
+  width: 72px;
+  height: 72px;
   border: 4px solid #fff;
   border-radius: 50%;
   background: linear-gradient(180deg, #fff, #f6e9f5);
@@ -299,4 +299,5 @@ body { background: #efe0f2; }
 }
 .buddy--a { left: 12%; top: 0; }
 .buddy--b { right: 12%; top: 42px; animation-delay: 1.1s; }
-.buddy .artImg { transform: scale(1.2); }
+/* 캐릭터 그림은 배경이 없어 그대로 얹습니다 */
+.buddy .charImg { inset: 7%; width: 86%; height: 86%; }
