@@ -3,7 +3,7 @@
 
   스타트 화면/앱아이콘.jpeg  -> 앱아이콘.png (투명) + icons/*.png
   스타트 화면/...003~006     -> shared/art/thumb-*.jpg (카드 썸네일)
-  스톱워치/...001~004        -> shared/art/watch-*.png (스톱워치 화면 부품)
+  스톱워치/...001·003·004    -> shared/art/watch-*.png (스톱워치 화면 부품)
 
   python3 tools/build-assets.py
 """
@@ -245,8 +245,19 @@ def build_watch():
 
     erase_ink(board, (24, 524, 210, 574), 20, 10)   # 구석의 흐린 서명 지우기
 
-    board.resize((980, round(980 * H / W)), Image.LANCZOS).save(
-        os.path.join(ART, "watch-board.jpg"), quality=88, optimize=True)
+    # 판 둘레의 어두운 바탕을 지워 투명 PNG 로 냅니다.
+    # (JPG 로 두면 검은 테두리가 화면 배경 위에 네모로 드러납니다.)
+    # 바탕색이 짙은 갈색이라 밝기로 가르면 판의 테두리선까지 먹습니다.
+    # 그래서 판·리본·발바닥의 모양을 직접 그려 오려냅니다.
+    from PIL import ImageDraw as _D, ImageFilter as _F
+    alpha = Image.new("L", (W, H), 0)
+    d = _D.Draw(alpha)
+    d.rounded_rectangle([9, 58, W - 10, H - 3], radius=36, fill=255)     # 종이 판
+    d.rounded_rectangle([424, 5, 1060, 152], radius=22, fill=255)        # 위쪽 리본
+    d.ellipse([1359 - 74, 78 - 74, 1359 + 74, 78 + 74], fill=255)        # 발바닥 딱지
+    alpha = alpha.filter(_F.GaussianBlur(1.6))
+    board.putalpha(alpha)
+    save_png(board, os.path.join(ART, "watch-board.png"), 980)
 
     print("결과판 좌표(%):")
     for k, b in spots.items():
@@ -255,8 +266,6 @@ def build_watch():
             (b[2] - b[0]) / W * 100, (b[3] - b[1]) / H * 100))
 
     # --- 안내용 시간 그림, 별·구름 버튼 ---
-    save_png(_cut(src % "002", thresh=46), os.path.join(ART, "watch-hint.png"), 760)
-
     # 구름은 늘 "초기화" 라서 그려진 글자를 그대로 씁니다.
     save_png(_cut(src % "004", thresh=46), os.path.join(ART, "watch-cloud.png"), 520)
 

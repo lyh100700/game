@@ -7,8 +7,11 @@ body { background: #efe0f2; }
 .watch {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  padding-bottom: calc(14px + env(safe-area-inset-bottom));
+  /* svh 는 주소창이 보이는 상태의 높이라, 폰에서 아래가 잘리거나 밀리지 않습니다 */
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  padding-bottom: calc(10px + env(safe-area-inset-bottom));
   background: #efe0f2 url("../shared/art/bg-clouds.svg") center / cover no-repeat fixed;
 }
 
@@ -16,7 +19,7 @@ body { background: #efe0f2; }
 .sky { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
 .cloud { display: none; }
 
-.watch .topbar { color: #7a5b86; }
+.watch .topbar { flex: 0 0 auto; padding: 10px 14px; color: #7a5b86; }
 .watch .topbar__title {
   color: #e2699a;
   -webkit-text-stroke: 5px #fff;
@@ -43,7 +46,7 @@ body { background: #efe0f2; }
   position: relative;
   z-index: 2;
   flex: 0 0 auto;
-  padding: 22px 12px 6px;
+  padding: 16px 12px 4px;
   text-align: center;
 }
 .display__time {
@@ -68,28 +71,6 @@ body { background: #efe0f2; }
   45% { transform: scale(1.45) rotate(-7deg); }
   100% { transform: scale(1) rotate(0); }
 }
-
-/* 끝자리를 쓴다는 설명 — 예시 그림으로 보여 줍니다 */
-.display__hint {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 6px;
-  color: #a8749a;
-  font-weight: 900;
-  font-size: 12px;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, .9);
-  transition: opacity .3s ease;
-}
-.display__eg {
-  width: 44%;
-  max-width: 190px;
-  height: auto;
-  filter: drop-shadow(0 3px 5px rgba(150, 110, 170, .35));
-}
-/* 재는 동안에는 살짝 물러납니다 */
-.watch.is-live .display__hint { opacity: .38; }
 
 /* ---- 조작 버튼 ---- */
 .pads {
@@ -226,9 +207,10 @@ body { background: #efe0f2; }
   position: relative;
   container-type: inline-size;
   aspect-ratio: 1469 / 576;
-  filter: drop-shadow(0 6px 10px rgba(120, 90, 150, .35));
+  /* 투명 PNG 라서 그림자가 판 모양을 그대로 따라갑니다 */
+  filter: drop-shadow(0 5px 9px rgba(120, 90, 150, .38));
 }
-.board__bg { display: block; width: 100%; height: 100%; border-radius: 14px; }
+.board__bg { display: block; width: 100%; height: 100%; }
 
 /* 그림을 못 불러왔을 때를 위한 최소한의 판 */
 .board.is-bare {

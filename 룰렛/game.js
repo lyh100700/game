@@ -5,16 +5,32 @@
 (function () {
   "use strict";
 
-  var FACES = ["🐻", "🐱", "🐼", "🐰", "🦊", "🐯", "🐷", "🐸", "🐧", "🐶"];
-  var ARTS = ["ch-bear", "ch-cat", "ch-panda", "ch-rabbit", "ch-fox",
-              "ch-tiger", "ch-pig", "ch-frog", "ch-penguin", "ch-dog"];
-  var TONES = ["#f7a8a8", "#fbcf86", "#f6e78a", "#b3e59c", "#9adae3",
-               "#a6b6f2", "#d0aef0", "#f6adda", "#dcc6a8", "#b4c8dc"];
+  /* 칸에 들어가는 캐릭터는 룰렛 그림에서 오려낸 얼굴입니다.
+     tools/wheel-faces.py 가 만든 faces/f01.png ~ f10.png 를 씁니다.
+     번호는 12시 방향부터 시계방향으로 1..10 입니다. */
+  var NAMES = ["곰", "고양이", "판다", "토끼", "호랑이",
+               "강아지", "여우", "코알라", "너구리", "아기여우"];
+  var EMOJI = ["🐻", "🐱", "🐼", "🐰", "🐯", "🐶", "🦊", "🐨", "🦝", "🦊"];
+
+  /* 칸 색 — 원본 그림의 오로라빛 파스텔을 두 색 그라데이션으로 옮긴 값 */
+  var TONES = [
+    ["#c9d4f7", "#f3c7e3"], ["#f8b3ca", "#f59fb6"], ["#a9e4c7", "#cbeca2"],
+    ["#fbda8c", "#f8be7e"], ["#b7e7a5", "#a6e3d7"], ["#ccb5ed", "#f3b4d9"],
+    ["#fbd7a7", "#fdefcc"], ["#b9e9c7", "#eef0a9"], ["#f5a7c7", "#e990c3"],
+    ["#c9a9eb", "#f5b9d3"],
+  ];
+
+  function faceSrc(i) {
+    var n = (i % 10) + 1;
+    return "faces/f" + (n < 10 ? "0" : "") + n + ".png";
+  }
 
   var SPIN_MS = 4800;
   var MIN_TURNS = 5, MAX_TURNS = 8;
-  var R = 84;          /* 룰렛 반지름 */
-  var RIM = 95;        /* 바깥 테 반지름 */
+  var R = 76;          /* 칸이 그려지는 반지름 */
+  var BAND_OUT = 93;   /* 룬 무늬 띠 바깥 */
+  var BAND_IN = 82;    /* 룬 무늬 띠 안쪽 */
+  var RIM = 99;        /* 로즈골드 테 바깥 */
 
   var svg = document.getElementById("svg");
   var spinBtn = document.getElementById("spin");
@@ -43,93 +59,122 @@
     return [r * Math.cos(rad), r * Math.sin(rad)];
   }
 
-  /** 칸 가운데에 캐릭터 그림을 원형으로 잘라 얹습니다.
-      파일이 없으면 onerror 로 스스로 사라져 이모지가 남습니다. */
-  function addFaceArt(parent, artId, cx, cy, r, i) {
-    if (!artId || !global_Art) return;
-    /* 흰 원보다 조금 작게 잘라 테두리가 남게 합니다.
-       그래야 그림마다 다른 배경색이 칸 색과 직접 부딪히지 않습니다. */
-    var ri = r - 1.6;
+  /** 칸 가운데에 캐릭터 얼굴을 동그랗게 얹습니다. */
+  function addFace(parent, i, cx, cy, r) {
     var clipId = "faceClip" + i;
     var clip = el("clipPath", { id: clipId });
-    clip.appendChild(el("circle", { cx: cx.toFixed(2), cy: cy.toFixed(2), r: ri }));
+    clip.appendChild(el("circle", { cx: cx.toFixed(2), cy: cy.toFixed(2), r: r }));
     parent.appendChild(clip);
 
+    parent.appendChild(el("circle", {
+      cx: cx.toFixed(2), cy: cy.toFixed(2), r: r + 1.3,
+      fill: "#fffdf8", opacity: ".95",
+    }));
     var img = el("image", {
-      href: global_Art.url(artId),
-      x: (cx - ri).toFixed(2), y: (cy - ri).toFixed(2),
-      width: ri * 2, height: ri * 2,
+      href: faceSrc(i),
+      x: (cx - r).toFixed(2), y: (cy - r).toFixed(2),
+      width: (r * 2).toFixed(2), height: (r * 2).toFixed(2),
       "clip-path": "url(#" + clipId + ")",
       preserveAspectRatio: "xMidYMid slice",
     });
     img.addEventListener("error", function () {
       img.remove();
-      clip.remove();
+      /* 그림이 없으면 이모지로 물러납니다 */
+      parent.appendChild(el("text", {
+        class: "slice__face", x: cx.toFixed(2), y: cy.toFixed(2),
+        "font-size": (r * 1.5).toFixed(1),
+        "text-anchor": "middle", "dominant-baseline": "central",
+      }, EMOJI[i % EMOJI.length]));
     });
     parent.appendChild(img);
+    parent.appendChild(el("circle", {
+      cx: cx.toFixed(2), cy: cy.toFixed(2), r: r,
+      fill: "none", stroke: "#ffffff", "stroke-width": 1.6, opacity: ".9",
+    }));
   }
-
-  var global_Art = window.Art;
 
   /* ---------- 그리기 ---------- */
 
   function defs() {
     var d = el("defs");
 
-    /* 가운데 보석 */
-    var hub = el("radialGradient", { id: "hubGrad", cx: "35%", cy: "30%" });
-    hub.appendChild(el("stop", { offset: "0%", "stop-color": "#ffffff" }));
-    hub.appendChild(el("stop", { offset: "40%", "stop-color": "#cfe9fb" }));
-    hub.appendChild(el("stop", { offset: "100%", "stop-color": "#8f7ad4" }));
-    d.appendChild(hub);
+    /* 칸마다 오로라빛 두 색 그라데이션 */
+    for (var i = 0; i < TONES.length; i++) {
+      var g = el("linearGradient", { id: "secG" + i, x1: "0%", y1: "0%", x2: "70%", y2: "100%" });
+      g.appendChild(el("stop", { offset: "0%", "stop-color": TONES[i][0] }));
+      g.appendChild(el("stop", { offset: "100%", "stop-color": TONES[i][1] }));
+      d.appendChild(g);
+    }
 
-    /* 바깥 테 — 위쪽이 밝은 금속 느낌 */
-    var rim = el("linearGradient", { id: "rimGrad", x1: "0%", y1: "0%", x2: "0%", y2: "100%" });
-    rim.appendChild(el("stop", { offset: "0%", "stop-color": "#ffffff" }));
-    rim.appendChild(el("stop", { offset: "45%", "stop-color": "#efe0f7" }));
-    rim.appendChild(el("stop", { offset: "100%", "stop-color": "#c9aee4" }));
+    /* 로즈골드 테 */
+    var rim = el("linearGradient", { id: "rimGrad", x1: "10%", y1: "0%", x2: "60%", y2: "100%" });
+    rim.appendChild(el("stop", { offset: "0%", "stop-color": "#fdf1ea" }));
+    rim.appendChild(el("stop", { offset: "32%", "stop-color": "#f0cfc2" }));
+    rim.appendChild(el("stop", { offset: "62%", "stop-color": "#e5b6a8" }));
+    rim.appendChild(el("stop", { offset: "100%", "stop-color": "#cf9a8d" }));
     d.appendChild(rim);
 
-    /* 유리 광택 — 회전하지 않고 고정돼 있어야 빛이 한 방향에서 오는 것처럼 보입니다 */
-    var gloss = el("radialGradient", { id: "glossGrad", cx: "32%", cy: "24%", r: "72%" });
-    gloss.appendChild(el("stop", { offset: "0%", "stop-color": "#ffffff", "stop-opacity": ".55" }));
-    gloss.appendChild(el("stop", { offset: "42%", "stop-color": "#ffffff", "stop-opacity": ".16" }));
-    gloss.appendChild(el("stop", { offset: "78%", "stop-color": "#ffffff", "stop-opacity": "0" }));
-    d.appendChild(gloss);
+    /* 무늬가 새겨진 라벤더 띠 */
+    var band = el("linearGradient", { id: "bandGrad", x1: "0%", y1: "0%", x2: "40%", y2: "100%" });
+    band.appendChild(el("stop", { offset: "0%", "stop-color": "#dfe0f6" }));
+    band.appendChild(el("stop", { offset: "45%", "stop-color": "#cdd2ef" }));
+    band.appendChild(el("stop", { offset: "100%", "stop-color": "#e7d6ea" }));
+    d.appendChild(band);
 
-    /* 포인터 */
-    var pg = el("linearGradient", { id: "ptrGrad", x1: "0%", y1: "0%", x2: "0%", y2: "100%" });
-    pg.appendChild(el("stop", { offset: "0%", "stop-color": "#ffd9e6" }));
-    pg.appendChild(el("stop", { offset: "55%", "stop-color": "#f58aae" }));
-    pg.appendChild(el("stop", { offset: "100%", "stop-color": "#d95a86" }));
-    d.appendChild(pg);
+    /* 가운데 오팔 보석 */
+    var hub = el("radialGradient", { id: "hubGrad", cx: "36%", cy: "30%" });
+    hub.appendChild(el("stop", { offset: "0%", "stop-color": "#ffffff" }));
+    hub.appendChild(el("stop", { offset: "34%", "stop-color": "#d9f2ff" }));
+    hub.appendChild(el("stop", { offset: "62%", "stop-color": "#f3d9f5" }));
+    hub.appendChild(el("stop", { offset: "100%", "stop-color": "#b7a3e4" }));
+    d.appendChild(hub);
+
+    /* 유리 광택 — 회전하지 않고 고정돼 있어야 빛이 한 방향에서 오는 것처럼 보입니다 */
+    var gloss = el("radialGradient", { id: "glossGrad", cx: "32%", cy: "22%", r: "74%" });
+    gloss.appendChild(el("stop", { offset: "0%", "stop-color": "#ffffff", "stop-opacity": ".5" }));
+    gloss.appendChild(el("stop", { offset: "40%", "stop-color": "#ffffff", "stop-opacity": ".14" }));
+    gloss.appendChild(el("stop", { offset: "80%", "stop-color": "#ffffff", "stop-opacity": "0" }));
+    d.appendChild(gloss);
 
     var shadow = el("filter", { id: "soft", x: "-30%", y: "-30%", width: "160%", height: "160%" });
     shadow.appendChild(el("feDropShadow", {
-      dx: 0, dy: 3, stdDeviation: 3, "flood-color": "#5a4690", "flood-opacity": ".35",
+      dx: 0, dy: 3, stdDeviation: 3, "flood-color": "#7a5f9c", "flood-opacity": ".38",
     }));
     d.appendChild(shadow);
 
     return d;
   }
 
+  /** 테 둘레의 작은 보석 장식 */
+  function studs(parent) {
+    var N = 16;
+    for (var i = 0; i < N; i++) {
+      var a = (360 / N) * i + 11;
+      var pp = pt(a, (BAND_OUT + BAND_IN) / 2);
+      var col = ["#f4b9cf", "#bcd3f2", "#f7ddaa", "#cbbaf0"][i % 4];
+      parent.appendChild(el("path", {
+        class: "stud",
+        d: "M 0 -3.4 L 3 0 L 0 3.4 L -3 0 Z",
+        transform: "translate(" + pp[0].toFixed(2) + " " + pp[1].toFixed(2) + ") rotate(" + a.toFixed(1) + ")",
+        fill: col, stroke: "#fffaf6", "stroke-width": 1,
+        style: "animation-delay:" + (i * 0.11).toFixed(2) + "s",
+      }));
+    }
+  }
+
   function draw() {
     svg.innerHTML = "";
     svg.appendChild(defs());
 
-    /* 바깥 테와 전구 장식 */
+    /* 바깥 로즈골드 테 → 무늬 띠 → 안쪽 테 */
     svg.appendChild(el("circle", { cx: 0, cy: 0, r: RIM, fill: "url(#rimGrad)", filter: "url(#soft)" }));
-    svg.appendChild(el("circle", { cx: 0, cy: 0, r: RIM - 2, fill: "none", stroke: "#ffffff", "stroke-width": 2, opacity: ".9" }));
-
-    var BULBS = 20;
-    for (var b = 0; b < BULBS; b++) {
-      var bp = pt((360 / BULBS) * b + 9, (R + RIM) / 2);
-      svg.appendChild(el("circle", {
-        class: "bulb", cx: bp[0].toFixed(2), cy: bp[1].toFixed(2), r: 2.6,
-        fill: b % 2 ? "#ffffff" : "#f7c9e4",
-        style: "animation-delay:" + (b * 0.09).toFixed(2) + "s",
-      }));
-    }
+    svg.appendChild(el("circle", { cx: 0, cy: 0, r: RIM - 2.5, fill: "none",
+                                   stroke: "#fffaf6", "stroke-width": 1.6, opacity: ".85" }));
+    svg.appendChild(el("circle", { cx: 0, cy: 0, r: BAND_OUT, fill: "url(#bandGrad)" }));
+    studs(svg);
+    svg.appendChild(el("circle", { cx: 0, cy: 0, r: BAND_IN, fill: "url(#rimGrad)" }));
+    svg.appendChild(el("circle", { cx: 0, cy: 0, r: BAND_IN - 3, fill: "none",
+                                   stroke: "#fffaf6", "stroke-width": 1.4, opacity: ".8" }));
 
     /* 회전하는 부분 */
     wheelGroup = el("g", { id: "wheelGroup" });
@@ -137,7 +182,8 @@
 
     var step = 360 / count;
     for (var i = 0; i < count; i++) {
-      var a0 = i * step, a1 = (i + 1) * step;
+      /* 반 칸 앞에서 시작해야 1번 칸이 12시 방향 한가운데에 옵니다 */
+      var a0 = i * step - step / 2, a1 = a0 + step;
       var p0 = pt(a0, R), p1 = pt(a1, R);
       var large = step > 180 ? 1 : 0;
 
@@ -147,55 +193,48 @@
         d: "M 0 0 L " + p0[0].toFixed(2) + " " + p0[1].toFixed(2) +
            " A " + R + " " + R + " 0 " + large + " 1 " +
            p1[0].toFixed(2) + " " + p1[1].toFixed(2) + " Z",
-        fill: TONES[i % TONES.length],
+        fill: "url(#secG" + (i % TONES.length) + ")",
       }));
 
       var mid = a0 + step / 2;
-      var np = pt(mid, R * 0.86);
-      var fp = pt(mid, R * 0.55);
+      var np = pt(mid, R * 0.84);
+      var fp = pt(mid, R * 0.53);
 
-      /* 숫자는 바깥쪽, 얼굴은 흰 동그라미 안에 */
+      /* 숫자는 바깥쪽, 얼굴은 그 안쪽에 */
       wheelGroup.appendChild(el("text", {
         class: "slice__num",
         x: np[0].toFixed(2), y: np[1].toFixed(2),
+        "font-size": count > 8 ? 16 : 19,
         "text-anchor": "middle", "dominant-baseline": "central",
         transform: "rotate(" + mid.toFixed(2) + " " + np[0].toFixed(2) + " " + np[1].toFixed(2) + ")",
       }, String(i + 1)));
 
-      var rad = count > 8 ? 10 : 12;
-      wheelGroup.appendChild(el("circle", {
-        class: "slice__disc",
-        cx: fp[0].toFixed(2), cy: fp[1].toFixed(2), r: rad,
-      }));
-      wheelGroup.appendChild(el("text", {
-        class: "slice__face",
-        x: fp[0].toFixed(2), y: fp[1].toFixed(2),
-        "font-size": count > 8 ? 12 : 14,
-        "text-anchor": "middle", "dominant-baseline": "central",
-      }, FACES[i % FACES.length]));
-
-      /* 생성된 그림이 있으면 이모지 위에 원형으로 덮습니다 */
-      addFaceArt(wheelGroup, ARTS[i % ARTS.length], fp[0], fp[1], rad, i);
+      addFace(wheelGroup, i, fp[0], fp[1], count > 8 ? 12 : 14.5);
     }
 
     /* 고정된 광택 — 회전 그룹 바깥에 둡니다 */
     svg.appendChild(el("circle", { cx: 0, cy: 0, r: R, fill: "url(#glossGrad)", "pointer-events": "none" }));
-    svg.appendChild(el("circle", { cx: 0, cy: 0, r: R, fill: "none", stroke: "#ffffff", "stroke-width": 3 }));
 
-    /* 가운데 보석 */
-    svg.appendChild(el("circle", { cx: 0, cy: 0, r: 17, fill: "#ffffff", filter: "url(#soft)" }));
-    svg.appendChild(el("circle", { cx: 0, cy: 0, r: 13.5, fill: "url(#hubGrad)" }));
-    svg.appendChild(el("ellipse", { cx: -4, cy: -5, rx: 4.2, ry: 2.8, fill: "#ffffff", opacity: ".75" }));
+    /* 가운데 보석 받침 */
+    svg.appendChild(el("circle", { cx: 0, cy: 0, r: 22, fill: "url(#rimGrad)", filter: "url(#soft)" }));
+    svg.appendChild(el("circle", { cx: 0, cy: 0, r: 18, fill: "url(#bandGrad)" }));
+    svg.appendChild(el("circle", { cx: 0, cy: 0, r: 18, fill: "none", stroke: "#fffaf6", "stroke-width": 1.2 }));
+    svg.appendChild(el("circle", { cx: 0, cy: 0, r: 13, fill: "url(#rimGrad)" }));
+    svg.appendChild(el("circle", { cx: 0, cy: 0, r: 10, fill: "url(#hubGrad)" }));
+    svg.appendChild(el("ellipse", { cx: -3, cy: -3.6, rx: 3.2, ry: 2.1, fill: "#ffffff", opacity: ".8" }));
 
-    /* 포인터 — 위에서 아래를 가리키는 물방울 */
+    /* 포인터 — 위에 얹힌 로즈골드 삼각 보석 */
     pointerG = el("g", { id: "pointerG", filter: "url(#soft)" });
     pointerG.appendChild(el("path", {
-      d: "M -12 " + (-RIM - 9) + " Q 0 " + (-RIM - 20) + " 12 " + (-RIM - 9) +
-         " Q 6 " + (-R + 6) + " 0 " + (-R + 12) +
-         " Q -6 " + (-R + 6) + " -12 " + (-RIM - 9) + " Z",
-      fill: "url(#ptrGrad)", stroke: "#ffffff", "stroke-width": 3, "stroke-linejoin": "round",
+      d: "M -15 " + (-RIM - 4) + " Q -17 " + (-RIM - 15) + " -8 " + (-RIM - 16) +
+         " L 8 " + (-RIM - 16) + " Q 17 " + (-RIM - 15) + " 15 " + (-RIM - 4) +
+         " L 2 " + (-RIM + 17) + " Q 0 " + (-RIM + 20) + " -2 " + (-RIM + 17) + " Z",
+      fill: "url(#rimGrad)", stroke: "#fffaf6", "stroke-width": 2.4, "stroke-linejoin": "round",
     }));
-    pointerG.appendChild(el("circle", { cx: 0, cy: -RIM - 6, r: 3, fill: "#ffffff", opacity: ".8" }));
+    pointerG.appendChild(el("path", {
+      d: "M -8 " + (-RIM - 9) + " L 8 " + (-RIM - 9) + " L 0 " + (-RIM + 9) + " Z",
+      fill: "url(#hubGrad)", stroke: "#fffaf6", "stroke-width": 1.2, "stroke-linejoin": "round",
+    }));
     svg.appendChild(pointerG);
 
     applyAngle();
@@ -205,16 +244,19 @@
     if (wheelGroup) wheelGroup.setAttribute("transform", "rotate(" + angle.toFixed(2) + ")");
   }
 
+  /* 참가자 목록 — 룰렛 칸에 있는 캐릭터가 그대로 줄줄이 나옵니다.
+     (룰렛 플레이어화면.png 을 본떴습니다) */
   function buildList() {
     var box = document.getElementById("plist");
     var html = "";
     for (var i = 0; i < count; i++) {
+      var t = TONES[i % TONES.length];
       html +=
-        '<div class="prow" style="--tone:' + TONES[i % TONES.length] + '">' +
-          '<span class="prow__face">' + FACES[i % FACES.length] +
-            Art.tag(ARTS[i % ARTS.length]) + "</span>" +
+        '<div class="prow" style="--t1:' + t[0] + ";--t2:" + t[1] + '">' +
+          '<span class="prow__face">' + EMOJI[i % EMOJI.length] +
+            '<img class="prow__img" src="' + faceSrc(i) + '" alt="" onerror="this.remove()">' +
+          "</span>" +
           '<span class="prow__name">Player ' + (i + 1) + "</span>" +
-          '<span class="prow__no">' + (i + 1) + "</span>" +
         "</div>";
     }
     box.innerHTML = html;
@@ -237,7 +279,7 @@
        칸 안에서 살짝 흔들리게 해 매번 같은 자리에 멈춘 티가 나지 않도록 합니다. */
     var jitter = (Math.random() - 0.5) * step * 0.55;
     var turns = MIN_TURNS + Math.floor(Math.random() * (MAX_TURNS - MIN_TURNS + 1));
-    var center = winner * step + step / 2;
+    var center = winner * step;
     var from = angle;
     var target = from + turns * 360 + (360 - ((from + center) % 360)) % 360 + jitter;
 
@@ -282,10 +324,12 @@
     Fx.confetti(screen, { x: 50, y: 42, count: 54 });
 
     setTimeout(function () {
-      document.getElementById("popEmoji").textContent = FACES[winner % FACES.length];
+      document.getElementById("popEmoji").innerHTML =
+        EMOJI[winner % EMOJI.length] +
+        '<img class="popup__face" src="' + faceSrc(winner) + '" alt="" onerror="this.remove()">';
       document.getElementById("popTitle").textContent = "Player " + (winner + 1) + " 당첨!";
       document.getElementById("popText").textContent =
-        count + "명 중 " + (winner + 1) + "번 칸이 뽑혔어요. 🎊";
+        count + "명 중 " + (winner + 1) + "번(" + NAMES[winner % NAMES.length] + ") 칸이 뽑혔어요. 🎊";
       popup.classList.add("is-open");
       Sfx.play("coin");
     }, 600);
@@ -322,7 +366,7 @@
   });
 
   Sfx.mountToggle(screen);
-  Fx.sparkles(document.querySelector(".sky"), 7);
+  Fx.sparkles(document.querySelector(".sky"), 6, ["✨", "⭐"]);
   draw();
   buildList();
 })();

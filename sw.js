@@ -2,7 +2,7 @@
    앱을 한 번 열면 파일을 폰에 저장해 두고, 다음부터는 인터넷 없이도 실행됩니다.
    내용을 고친 뒤에는 아래 VERSION 숫자를 반드시 올리세요. 그래야 갱신됩니다. */
 
-const VERSION = 7;
+const VERSION = 8;
 const CACHE = "cutegames-v" + VERSION;
 
 const ASSETS = [
@@ -29,8 +29,7 @@ const ASSETS = [
   "./shared/art/thumb-ladder.jpg",
   "./shared/art/thumb-watch.jpg",
   "./shared/art/thumb-wheel.jpg",
-  "./shared/art/watch-board.jpg",
-  "./shared/art/watch-hint.png",
+  "./shared/art/watch-board.png",
   "./shared/art/watch-star.png",
   "./shared/art/watch-star-stop.png",
   "./shared/art/watch-cloud.png",
@@ -51,7 +50,28 @@ const ASSETS = [
   "./이빨/style.css",
   "./이빨/game.js",
   "./이빨/이빨화면.jpg",
+  "./이빨/이빨화면-잇몸.jpg",
   "./이빨/이빨화면2.jpg",
+  "./이빨/teeth/t01.png",
+  "./이빨/teeth/t02.png",
+  "./이빨/teeth/t03.png",
+  "./이빨/teeth/t04.png",
+  "./이빨/teeth/t05.png",
+  "./이빨/teeth/t06.png",
+  "./이빨/teeth/t07.png",
+  "./이빨/teeth/t08.png",
+  "./이빨/teeth/t09.png",
+  "./이빨/teeth/t10.png",
+  "./이빨/teeth/t11.png",
+  "./이빨/teeth/t12.png",
+  "./이빨/teeth/t13.png",
+  "./이빨/teeth/t14.png",
+  "./이빨/teeth/t15.png",
+  "./이빨/teeth/t16.png",
+  "./이빨/teeth/t17.png",
+  "./이빨/teeth/t18.png",
+  "./이빨/teeth/t19.png",
+  "./이빨/teeth/t20.png",
 
   "./사다리/index.html",
   "./사다리/style.css",
@@ -64,6 +84,16 @@ const ASSETS = [
   "./룰렛/index.html",
   "./룰렛/style.css",
   "./룰렛/game.js",
+  "./룰렛/faces/f01.png",
+  "./룰렛/faces/f02.png",
+  "./룰렛/faces/f03.png",
+  "./룰렛/faces/f04.png",
+  "./룰렛/faces/f05.png",
+  "./룰렛/faces/f06.png",
+  "./룰렛/faces/f07.png",
+  "./룰렛/faces/f08.png",
+  "./룰렛/faces/f09.png",
+  "./룰렛/faces/f10.png",
 ];
 
 self.addEventListener("install", (e) => {

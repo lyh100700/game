@@ -8,13 +8,16 @@ body { background: #10131a; }
 .dino {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  /* svh 는 주소창이 보이는 상태의 높이라, 폰에서 아래가 잘리거나 밀리지 않습니다 */
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
   background:
     radial-gradient(90% 45% at 50% 0%, #2f4250 0%, transparent 68%),
     radial-gradient(80% 40% at 50% 100%, #3a2430 0%, transparent 70%),
     #10131a;
 }
-.dino .topbar { color: #f3ede4; }
+.dino .topbar { flex: 0 0 auto; padding: 10px 14px; color: #f3ede4; }
 .dino .topbar__title {
   color: #ffd76a;
   -webkit-text-stroke: 5px #3a2c1c;
@@ -25,27 +28,32 @@ body { background: #10131a; }
 .dino .topbar__back { background: linear-gradient(180deg, #4a5865, #2c3640); color: #fff; border-color: rgba(255,255,255,.55); }
 .dino .sfxBtn { background: linear-gradient(180deg, #4a5865, #2c3640); border-color: rgba(255,255,255,.55); }
 
-/* ---- 입 이미지 무대 ---- */
+/* ---- 입 그림 무대 ----
+   남는 높이에 맞춰 크기가 정해지고, 너비는 그림 비율(1080:2316)을 따라갑니다.
+   그래서 아래 이빨이 잘리는 일이 없습니다. */
+.stageWrap {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  justify-content: center;
+  padding: 0 10px 2px;
+}
 .stage {
   position: relative;
-  width: calc(100% - 20px);
+  height: 100%;
+  max-width: 100%;
   aspect-ratio: 1080 / 2316;
-  max-height: calc(100vh - 200px);
-  margin: 0 auto;
-  flex: 1 1 auto;
-  border: 5px solid #ffffff;
-  border-radius: 26px;
+  border: 4px solid #ffffff;
+  border-radius: 22px;
   overflow: hidden;
-  box-shadow: 0 14px 44px rgba(0, 0, 0, .7), 0 0 0 3px rgba(0, 0, 0, .35);
+  box-shadow: 0 12px 34px rgba(0, 0, 0, .65), 0 0 0 3px rgba(0, 0, 0, .35);
 }
 .stage__img {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  /* 위쪽을 기준으로 맞춰야 공룡 얼굴이 잘리지 않습니다 */
-  object-position: 50% 0%;
+  object-fit: fill;    /* 무대와 그림의 비율이 같아 늘어나지 않습니다 */
   display: block;
 }
 .stage.is-chomped { animation: shake .5s ease-in-out 2; }
@@ -67,55 +75,82 @@ body { background: #10131a; }
 
 .teeth { position: absolute; inset: 0; }
 
-/* ---- 이빨 한 개 ---- */
+/* ---- 이빨 한 개 ----
+   버튼 안에 진짜 이빨 조각 그림이 들어 있습니다.
+   누르면 그 조각이 잇몸 쪽(--dx/--dy 방향)으로 쑥 빠집니다. */
 .tooth {
   position: absolute;
-  width: 12.5%;
-  height: 6.2%;
   padding: 0;
   border: none;
   background: transparent;
   transform: translate(-50%, -50%);
   cursor: pointer;
-  border-radius: 50%;
+}
+.tooth__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transform-origin: 50% 50%;
+  transition: transform .1s cubic-bezier(.3, 0, .5, 1);
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .45));
+}
+/* 손가락이 닿는 순간 살짝 눌립니다 */
+.tooth:active .tooth__img {
+  transform: translate(calc(var(--dx) * 6%), calc(var(--dy) * 6%)) scale(.93);
 }
 
 /* 아직 안 누른 이빨에 옅은 반짝임 — 어디를 눌러야 하는지 알려줍니다 */
 .tooth::after {
   content: "";
   position: absolute;
-  inset: 10%;
+  inset: 16%;
   border-radius: 50%;
-  background: radial-gradient(circle at 40% 32%, rgba(255, 255, 255, .75), transparent 66%);
+  background: radial-gradient(circle at 42% 30%, rgba(255, 255, 255, .8), transparent 62%);
   opacity: 0;
-  animation: hint 2.8s ease-in-out infinite;
+  pointer-events: none;
+  animation: hint 3s ease-in-out infinite;
 }
-.tooth:nth-child(3n)::after   { animation-delay: .6s; }
-.tooth:nth-child(3n+1)::after { animation-delay: 1.3s; }
+.tooth:nth-child(3n)::after   { animation-delay: .7s; }
+.tooth:nth-child(3n+1)::after { animation-delay: 1.5s; }
 @keyframes hint {
-  0%, 74%, 100% { opacity: 0; }
-  86% { opacity: .6; }
+  0%, 76%, 100% { opacity: 0; }
+  88% { opacity: .55; }
 }
 .teeth.is-quiet .tooth::after { animation: none; opacity: 0; }
+.teeth.is-locked .tooth { pointer-events: none; }
 
-/* 눌린 이빨 — 잇몸 색 덩어리로 덮어 "쑥 들어간" 느낌을 냅니다 */
-.tooth.is-down { cursor: default; pointer-events: none; }
-.tooth.is-down::before {
+/* 빠진 자리에 지는 그늘 — 배경의 빈 잇몸을 더 움푹해 보이게 합니다 */
+.tooth::before {
   content: "";
   position: absolute;
-  inset: -10%;
+  inset: 12% 14%;
   border-radius: 50%;
-  background:
-    radial-gradient(58% 52% at 50% 30%, #6d1a14 0%, #9d271f 42%, #bd332a 74%, rgba(189, 51, 42, 0) 100%);
-  box-shadow:
-    inset 0 7px 12px rgba(0, 0, 0, .6),
-    inset 0 -4px 7px rgba(255, 130, 120, .35);
-  animation: sink .26s cubic-bezier(.4, 0, .25, 1) both;
+  background: radial-gradient(58% 56% at 50% 46%,
+    rgba(30, 7, 5, .62) 0%, rgba(30, 7, 5, .24) 60%, rgba(30, 7, 5, 0) 82%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s ease .05s;
+}
+
+/* 눌린 이빨 — 조각이 잇몸 속으로 빠져 들어갑니다 */
+.tooth.is-down { cursor: default; pointer-events: none; }
+.tooth.is-down::before { opacity: 1; }
+.tooth.is-down::after { display: none; }
+.tooth.is-down .tooth__img {
+  animation: sink .34s cubic-bezier(.35, .05, .3, 1) forwards;
 }
 @keyframes sink {
-  0%   { transform: translateY(-38%) scale(.65); opacity: 0; }
-  58%  { transform: translateY(5%)  scale(1.06); opacity: 1; }
-  100% { transform: translateY(0)   scale(1);    opacity: 1; }
+  0%   { transform: translate(0, 0) scale(1); opacity: 1; }
+  22%  { transform: translate(calc(var(--dx) * -5%), calc(var(--dy) * -5%)) scale(1.05); opacity: 1; }
+  100% { transform: translate(calc(var(--dx) * 52%), calc(var(--dy) * 52%)) scale(.46); opacity: 0; }
+}
+
+/* 꽝 이빨 — 빠지지 않고 그 자리에서 부르르 떱니다 */
+.tooth.is-bitten .tooth__img { animation: bitten .2s linear 2; }
+@keyframes bitten {
+  0%, 100% { transform: translate(0, 0) scale(1.04); }
+  50% { transform: translate(3%, -3%) scale(1.1); }
 }
 
 /* 누를 때 튀는 작은 조각 */
@@ -149,24 +184,25 @@ body { background: #10131a; }
 
 /* ---- 하단 HUD ---- */
 .hud {
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 12px 16px calc(16px + env(safe-area-inset-bottom));
+  padding: 8px 14px calc(10px + env(safe-area-inset-bottom));
 }
 .hud__count {
   display: flex;
   align-items: baseline;
   gap: 7px;
-  padding: 9px 18px;
+  padding: 7px 16px;
   border: 4px solid #fff;
   border-radius: 999px;
   background: linear-gradient(180deg, #3d4a57, #232c35);
   box-shadow: var(--drop-sm);
 }
 .hud__num {
-  font-size: 32px;
+  font-size: 28px;
   font-weight: 900;
   color: #ffd76a;
   -webkit-text-stroke: 4px #4a3a18;
@@ -176,7 +212,7 @@ body { background: #10131a; }
 .hud__num.is-bump { animation: bounceIn .38s cubic-bezier(.2, 1.7, .4, 1); }
 .hud__unit { font-size: 13px; font-weight: 800; color: #d9cfc2; }
 .hud__retry {
-  padding: 14px 22px;
-  font-size: 16px;
+  padding: 11px 20px;
+  font-size: 15px;
   background: linear-gradient(180deg, #f5877a 0%, var(--btn-red) 52%, var(--btn-red-deep) 100%);
 }

@@ -8,6 +8,7 @@ body {
 .main {
   padding: 14px 14px calc(28px + env(safe-area-inset-bottom));
   min-height: 100vh;
+  min-height: 100svh;
 }
 
 /* 배너가 글씨만 남아서 위 모서리가 비었습니다 — 참고 화면처럼 왼쪽 위로 올립니다 */
@@ -58,7 +59,8 @@ body {
   position: relative;
   z-index: 3;
   display: block;
-  width: 168px;
+  /* 화면이 짧으면 마스코트가 작아져 카드가 더 많이 보입니다 */
+  width: clamp(116px, 21svh, 168px);
   height: auto;
   margin: 2px auto -6px;
   filter: drop-shadow(0 10px 16px rgba(0, 0, 0, .45))

@@ -3,25 +3,34 @@
 (function () {
   "use strict";
 
-  /* 이빨 위치 — 이빨화면.jpg(1080×2316) 기준 백분율입니다.
-     화면에서 실제 이빨과 어긋나면 D 키를 눌러 조정 모드를 켜세요.
-     조정 모드에서 이미지를 클릭하면 그 지점의 좌표가 콘솔에 찍힙니다. */
+  /* 이빨 20개. tools/find-teeth.py 가 이빨화면.jpg 에서 직접 찾아낸 값이라
+     손으로 맞출 필요가 없습니다. 그림을 바꾸면 그 스크립트를 다시 돌리세요.
+       x, y  이빨 가운데 (그림 기준 %)      w, h  이빨 크기 (%)
+       up    윗니면 true                    gum   그 자리 잇몸색 */
   var TEETH = [
-    /* 윗니 (위쪽 활) */
-    { x: 18.0, y: 20.0 }, { x: 38.0, y: 19.3 }, { x: 61.1, y: 19.3 }, { x: 81.7, y: 20.3 },
-    /* 윗니 (왼쪽 옆줄) */
-    { x: 11.8, y: 27.8 }, { x: 11.8, y: 36.3 }, { x: 13.7, y: 44.5 },
-    /* 윗니 (오른쪽 옆줄) */
-    { x: 88.7, y: 27.8 }, { x: 88.7, y: 36.3 }, { x: 87.0, y: 44.5 },
-    /* 아랫니 (왼쪽 옆줄) */
-    { x: 15.0, y: 57.5 }, { x: 14.5, y: 65.5 }, { x: 15.0, y: 73.5 }, { x: 16.6, y: 81.0 },
-    /* 아랫니 (오른쪽 옆줄) */
-    { x: 85.7, y: 57.5 }, { x: 86.3, y: 65.5 }, { x: 85.7, y: 73.5 }, { x: 84.5, y: 81.0 },
-    /* 아랫니 (아래쪽 활) */
-    { x: 37.5, y: 83.5 }, { x: 51.5, y: 84.8 }, { x: 61.5, y: 83.5 },
+    { x: 18.89, y: 22.11, w: 15.93, h: 8.12, up: true , gum: "#903932" },
+    { x: 39.07, y: 20.90, w: 15.56, h: 8.12, up: true , gum: "#833a33" },
+    { x: 61.11, y: 20.90, w: 15.56, h: 8.12, up: true , gum: "#813a33" },
+    { x: 81.30, y: 22.11, w: 15.56, h: 8.12, up: true , gum: "#903932" },
+    { x: 11.11, y: 28.93, w: 15.93, h: 8.29, up: true , gum: "#743c3f" },
+    { x: 88.89, y: 28.84, w: 15.93, h: 8.12, up: true , gum: "#75393b" },
+    { x: 11.85, y: 36.87, w: 15.93, h: 8.29, up: true , gum: "#6e3a3a" },
+    { x: 88.15, y: 36.87, w: 15.93, h: 8.29, up: true , gum: "#6e3938" },
+    { x: 13.15, y: 45.42, w: 15.56, h: 8.12, up: true , gum: "#662625" },
+    { x: 86.85, y: 45.42, w: 15.56, h: 8.12, up: true , gum: "#662524" },
+    { x: 13.52, y: 57.69, w: 15.56, h: 8.12, up: false, gum: "#682422" },
+    { x: 86.30, y: 57.69, w: 15.56, h: 8.12, up: false, gum: "#6a211d" },
+    { x: 12.04, y: 66.49, w: 15.56, h: 8.12, up: false, gum: "#773839" },
+    { x: 87.96, y: 66.49, w: 15.56, h: 8.12, up: false, gum: "#773637" },
+    { x: 11.48, y: 74.44, w: 15.93, h: 8.12, up: false, gum: "#893b3a" },
+    { x: 88.52, y: 74.44, w: 15.93, h: 8.12, up: false, gum: "#8a3735" },
+    { x: 19.44, y: 81.00, w: 15.56, h: 8.12, up: false, gum: "#a8413e" },
+    { x: 39.07, y: 82.73, w: 15.56, h: 8.12, up: false, gum: "#bc5352" },
+    { x: 60.93, y: 82.73, w: 15.56, h: 8.12, up: false, gum: "#bc5352" },
+    { x: 80.56, y: 81.00, w: 15.56, h: 8.12, up: false, gum: "#a9423e" },
   ];
 
-  var IMG_OPEN = "이빨화면.jpg";
+  var IMG_OPEN = "이빨화면-잇몸.jpg";
   var IMG_SHUT = "이빨화면2.jpg";
 
   var stage = document.getElementById("stage");
@@ -49,12 +58,22 @@
   var pressed = 0;
   var over = false;
 
+  /** 이빨이 빠져 들어갈 방향. 입 가운데에서 바깥쪽(잇몸 쪽)으로 향합니다. */
+  function sinkDir(t) {
+    if (Math.abs(t.y - 52) > 25) return { dx: 0, dy: t.y > 52 ? 1 : -1 };  /* 위·아래 활 */
+    return { dx: t.x > 50 ? 1 : -1, dy: 0 };                               /* 양옆 줄 */
+  }
+
   function buildTeeth() {
     teethBox.innerHTML = TEETH.map(function (t, i) {
+      var d = sinkDir(t);
       return (
         '<button class="tooth" type="button" data-i="' + i + '"' +
-        ' style="left:' + t.x + "%;top:" + t.y + '%"' +
-        ' aria-label="' + (i + 1) + '번 이빨"></button>'
+        ' style="left:' + t.x + "%;top:" + t.y + "%;width:" + t.w + "%;height:" + t.h + "%" +
+        ";--dx:" + d.dx + ";--dy:" + d.dy + ";--gum:" + t.gum + '"' +
+        ' aria-label="' + (i + 1) + '번 이빨">' +
+        '<img class="tooth__img" src="teeth/t' + (i < 9 ? "0" : "") + (i + 1) + '.png" alt="">' +
+        "</button>"
       );
     }).join("");
   }
@@ -65,7 +84,7 @@
     chompIndex = Math.floor(Math.random() * TEETH.length);
     mouth.src = IMG_OPEN;
     stage.classList.remove("is-chomped");
-    teethBox.classList.remove("is-quiet");
+    teethBox.classList.remove("is-quiet", "is-locked");
     countEl.textContent = "0";
     vignette.style.setProperty("--tension", 0);
     vignette.classList.remove("is-beating");
@@ -92,14 +111,16 @@
     flash.classList.add("is-on");
 
     Sfx.play("chomp");
-    teethBox.innerHTML = "";
+    teethBox.classList.add("is-locked");
+    tooth.classList.add("is-bitten");
 
     /* 섬광이 걷힌 뒤 입이 닫힌 화면으로 */
     setTimeout(function () {
+      teethBox.innerHTML = "";
       mouth.src = IMG_SHUT;
       stage.classList.add("is-chomped");
       Sfx.play("growl");
-    }, 160);
+    }, 200);
 
     Progress.bump("dino");
 
