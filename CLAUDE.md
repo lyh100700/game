@@ -14,6 +14,7 @@ game/
 ├── sw.js                   서비스 워커 (오프라인)
 ├── 앱아이콘.png            메인 화면 마스코트 (배경을 지운 투명 PNG)
 ├── icons/                  앱 아이콘 (스타트 화면/앱아이콘.jpeg 에서 생성)
+├── 캐릭터/                 캐릭터 원본 그림 13종 (동물 이름으로 저장)
 ├── shared/
 │   ├── theme.css           색·버튼·팝업 등 공통 토큰
 │   ├── progress.js         플레이 횟수 기록 (localStorage)
@@ -89,6 +90,10 @@ python3 tools/build-assets.py     # Pillow 만 있으면 됩니다
   - `watch-cloud.png` 는 늘 "초기화" 라서 그려진 글자를 그대로 씁니다.
   - `watch-board.png` 는 투명 PNG 입니다. JPG 로 두면 검은 바탕이 화면 위에
     네모로 드러납니다.
+
+`캐릭터/` 는 **원본 보관용**입니다. 검은 바탕이 그대로 있는 큰 그림이라
+앱에서 바로 쓰지 않고, 필요할 때 `tools/imglib.py` 의 `cutout()` 으로
+바탕을 지우고 크기를 줄여 `shared/art/` 나 게임 폴더로 내보냅니다.
 
 이빨·룰렛 그림은 따로 만듭니다.
 
