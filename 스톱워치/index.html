@@ -31,10 +31,12 @@
 
     <p class="guide" id="guide">별을 눌러 시작하세요</p>
 
-    <!-- 참고 화면처럼 마스코트를 두어 가운데가 비어 보이지 않게 합니다 -->
-    <div class="buddies" aria-hidden="true">
-      <span class="buddy buddy--a">🐱</span>
-      <span class="buddy buddy--b">🐻</span>
+    <!-- 옆에서 구경하는 친구 셋. 캐릭터도 자리도 들어올 때마다 바뀝니다.
+         자리는 game.js 가 버튼·시계·결과판을 피해서 잡아 줍니다. -->
+    <div class="buddies" id="buddies" aria-hidden="true">
+      <span class="buddy">🐱</span>
+      <span class="buddy">🐻</span>
+      <span class="buddy">🐰</span>
     </div>
 
     <!-- 시간 표시 -->

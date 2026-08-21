@@ -209,17 +209,83 @@
     if (!action.disabled) action.click();
   });
 
-  /* 옆에 서 있는 친구 둘 — 들어올 때마다 캐릭터 13종 중에서 새로 뽑습니다.
-     둥실거리는 움직임은 CSS 가 맡으므로 그림만 갈아 끼우면 됩니다. */
-  if (window.Chars) {
-    var pair = Chars.pick(2);
-    ["buddy--a", "buddy--b"].forEach(function (cls, n) {
-      var box = document.querySelector("." + cls);
-      if (!box) return;
-      box.innerHTML = pair[n].emoji + Chars.tag(pair[n].id);
-      box.title = pair[n].ko;
+  /* ---------- 구경하는 친구들 ----------
+     들어올 때마다 캐릭터도 자리도 새로 뽑습니다.
+     자리는 버튼·시계·결과판을 피해서 잡습니다 — 눌러야 할 것을 가리면 안 되니까. */
+
+  var buddies = Array.prototype.slice.call(document.querySelectorAll(".buddy"));
+
+  /** 가리면 안 되는 것들의 자리 (화면 왼쪽 위 기준) */
+  function blockers(gap) {
+    var host = screen.getBoundingClientRect();
+    var sel = ".topbar, .guide, .display, .pad, .result, .sfxBtn";
+    return Array.prototype.map.call(document.querySelectorAll(sel), function (n) {
+      var r = n.getBoundingClientRect();
+      return {
+        l: r.left - host.left - gap, t: r.top - host.top - gap,
+        r: r.right - host.left + gap, b: r.bottom - host.top + gap,
+      };
     });
   }
+
+  /** 가로로 훑으면서 size 만큼 빈 자리를 모읍니다 */
+  function freeSpots(taken, size, host) {
+    var spots = [];
+    for (var y = 4; y + size <= host.height - 4; y += 8) {
+      var rows = taken.filter(function (b) { return b.b > y && b.t < y + size; })
+                      .sort(function (a, b) { return a.l - b.l; });
+      var cur = 4;
+      for (var i = 0; i < rows.length; i++) {
+        if (rows[i].l - cur >= size) spots.push({ x: cur, w: rows[i].l - cur, y: y });
+        cur = Math.max(cur, rows[i].r);
+      }
+      if (host.width - 4 - cur >= size) spots.push({ x: cur, w: host.width - 4 - cur, y: y });
+    }
+    return spots;
+  }
+
+  function placeBuddies() {
+    if (!buddies.length) return;
+    var host = screen.getBoundingClientRect();
+    if (!host.height) return;
+    var size = buddies[0].offsetWidth || 72;
+    var taken = blockers(10);
+
+    buddies.forEach(function (b) {
+      var spots = freeSpots(taken, size, host);
+      if (!spots.length) { b.classList.remove("is-set"); return; }
+      var s = spots[Math.floor(Math.random() * spots.length)];
+      var x = s.x + Math.random() * (s.w - size);
+      b.style.left = Math.round(x) + "px";
+      b.style.top = Math.round(s.y) + "px";
+      b.style.setProperty("--dur", (2.8 + Math.random() * 1.4).toFixed(2) + "s");
+      b.style.setProperty("--delay", (Math.random() * 1.6).toFixed(2) + "s");
+      b.classList.add("is-set");
+      /* 다음 친구가 겹치지 않도록 이 자리도 막습니다 */
+      taken.push({ l: x - 10, t: s.y - 10, r: x + size + 10, b: s.y + size + 10 });
+    });
+  }
+
+  if (window.Chars) {
+    Chars.pick(buddies.length).forEach(function (c, n) {
+      buddies[n].innerHTML = c.emoji + Chars.tag(c.id);
+      buddies[n].title = c.ko;
+    });
+  }
+
+  /* 글꼴·그림이 자리를 잡은 뒤에 재야 정확합니다 */
+  requestAnimationFrame(placeBuddies);
+  window.addEventListener("load", placeBuddies);
+
+  /* 화면이 크게 달라졌을 때만 다시 잡습니다.
+     폰에서 주소창이 접혔다 펴질 때마다 친구들이 튀면 어수선하니까요. */
+  var lastW = 0, lastH = 0;
+  window.addEventListener("resize", function () {
+    var w = window.innerWidth, h = window.innerHeight;
+    if (Math.abs(w - lastW) < 24 && Math.abs(h - lastH) < 90) return;
+    lastW = w; lastH = h;
+    placeBuddies();
+  });
 
   Sfx.mountToggle(document.getElementById("screen"));
   Fx.sparkles(document.querySelector(".sky"), 6, ["✨", "💫", "⭐"]);

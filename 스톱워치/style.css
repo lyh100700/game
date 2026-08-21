@@ -274,14 +274,13 @@ body { background: #efe0f2; }
 .board__total.is-set { animation: bounceIn .6s cubic-bezier(.2, 1.6, .4, 1); }
 
 /* ---- 마스코트 ---- */
+/* 화면 전체가 후보지입니다. 실제 자리는 game.js 가 잡습니다. */
 .buddies {
   position: absolute;
   z-index: 1;
-  left: 0;
-  right: 0;
-  top: 30%;
-  height: 120px;
+  inset: 0;
   pointer-events: none;
+  overflow: hidden;
 }
 .buddy {
   position: absolute;
@@ -294,10 +293,15 @@ body { background: #efe0f2; }
   background: linear-gradient(180deg, #fff, #f6e9f5);
   font-size: 32px;
   box-shadow: var(--drop-md);
-  animation: float 3.2s ease-in-out infinite;
   overflow: hidden;
+  opacity: 0;
+  transition: opacity .5s ease;
 }
-.buddy--a { left: 12%; top: 0; }
-.buddy--b { right: 12%; top: 42px; animation-delay: 1.1s; }
+/* 자리를 잡은 뒤에 나타나며 둥실거립니다.
+   흔들림은 transform 을 쓰므로, 나타나는 건 opacity 로만 처리합니다. */
+.buddy.is-set {
+  opacity: 1;
+  animation: float var(--dur, 3.2s) ease-in-out var(--delay, 0s) infinite;
+}
 /* 캐릭터 그림은 배경이 없어 그대로 얹습니다 */
 .buddy .charImg { inset: 7%; width: 86%; height: 86%; }
