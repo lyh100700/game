@@ -21,6 +21,11 @@
   var lastTick = 0;
   var records = [];
 
+  /* 뒤로 미뤄 둔 일들 — 초기화하면 반드시 같이 멈춰야 합니다.
+     안 그러면 카운트다운 중에 초기화해도 두 번째 스톱워치가 멋대로 시작합니다. */
+  var countdown = 0;
+  var popTimer = 0;
+
   /* ---------- 시간 표시 ---------- */
 
   function format(ms) {
@@ -110,13 +115,15 @@
       actionLabel.textContent = "준비";
       var left = 3;
       guide.textContent = "두 번째 스톱워치가 곧 시작돼요… " + left;
-      var iv = setInterval(function () {
+      clearInterval(countdown);
+      countdown = setInterval(function () {
         left--;
         Sfx.play("tick");
         if (left > 0) {
           guide.textContent = "두 번째 스톱워치가 곧 시작돼요… " + left;
         } else {
-          clearInterval(iv);
+          clearInterval(countdown);
+          countdown = 0;
           startRun(2);
         }
       }, 700);
@@ -142,7 +149,7 @@
 
     Progress.bump("watch");
 
-    setTimeout(function () {
+    popTimer = setTimeout(function () {
       document.getElementById("popEmoji").textContent = grade(total).emoji;
       document.getElementById("popTitle").textContent = total + " 점";
       document.getElementById("popText").textContent =
@@ -164,6 +171,9 @@
 
   function reset() {
     cancelAnimationFrame(raf);
+    clearInterval(countdown);
+    clearTimeout(popTimer);
+    countdown = popTimer = 0;
     phase = "idle";
     records = [];
     paint(0, false);

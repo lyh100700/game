@@ -91,7 +91,7 @@ python3 tools/build-assets.py     # Pillow 만 있으면 됩니다
 - 앱 아이콘 (`icons/*.png`) 과 마스코트 (`앱아이콘.png`) — 검은 배경을 지워 투명하게
 - 카드 썸네일 (`shared/art/thumb-*.jpg`) — 96:84 비율로 가장자리를 늘려 맞춤
 - 스톱워치 부품 (`shared/art/watch-*.png|jpg`)
-  - `watch-board.jpg` 는 원본에 **적혀 있던 숫자를 지운** 판입니다.
+  - `watch-board.png` 는 원본에 **적혀 있던 숫자를 지운** 판입니다.
     실제 값은 `스톱워치/style.css` 에서 백분율 좌표로 그 자리에 얹습니다.
     좌표를 다시 뽑으려면 `build-assets.py` 출력의 "결과판 좌표(%)" 를 보세요.
   - `watch-star.png` 는 "계속" 글자를 지운 별입니다. 화면에서 시작·멈춤·완료를 얹습니다.

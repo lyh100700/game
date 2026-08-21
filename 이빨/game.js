@@ -58,6 +58,15 @@
   var pressed = 0;
   var over = false;
 
+  /* 뒤로 미뤄 둔 일들. 새 판을 시작하면 모두 취소해야 합니다 —
+     안 그러면 지난 판의 결과 팝업이 새 판 위로 튀어나옵니다. */
+  var timers = [];
+  function later(fn, ms) { timers.push(setTimeout(fn, ms)); }
+  function dropTimers() {
+    timers.forEach(clearTimeout);
+    timers = [];
+  }
+
   /** 이빨이 빠져 들어갈 방향. 입 가운데에서 바깥쪽(잇몸 쪽)으로 향합니다. */
   function sinkDir(t) {
     if (Math.abs(t.y - 52) > 25) return { dx: 0, dy: t.y > 52 ? 1 : -1 };  /* 위·아래 활 */
@@ -79,6 +88,7 @@
   }
 
   function reset() {
+    dropTimers();
     over = false;
     pressed = 0;
     chompIndex = Math.floor(Math.random() * TEETH.length);
@@ -115,7 +125,7 @@
     tooth.classList.add("is-bitten");
 
     /* 섬광이 걷힌 뒤 입이 닫힌 화면으로 */
-    setTimeout(function () {
+    later(function () {
       teethBox.innerHTML = "";
       mouth.src = IMG_SHUT;
       stage.classList.add("is-chomped");
@@ -124,7 +134,7 @@
 
     Progress.bump("dino");
 
-    setTimeout(function () {
+    later(function () {
       popEmoji.textContent = "😱";
       popTitle.textContent = "CHOMP!";
       popText.textContent = "이빨 " + pressed + "개를 무사히 넘겼어요. " + safetyComment(pressed);
@@ -180,7 +190,7 @@
     if (pressed === TEETH.length - 1) {
       over = true;
       Progress.bump("dino");
-      setTimeout(function () {
+      later(function () {
         popEmoji.textContent = "🏆";
         popTitle.textContent = "PERFECT!";
         popText.textContent = "꽝 하나만 남기고 전부 눌렀어요. 대단한 운이에요!";

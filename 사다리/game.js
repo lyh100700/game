@@ -46,6 +46,11 @@
   var running = 0;      /* 지금 내려가는 중인 캐릭터 수 */
   var finished = [];    /* 이미 도착한 캐릭터 */
 
+  /* 판 번호. 새 판을 시작하면 하나 올라갑니다.
+     내려가던 캐릭터와 뒤로 미뤄 둔 일들은 자기 판 번호가 달라지면 조용히 물러납니다 —
+     안 그러면 초기화한 새 판 위로 지난 판의 결과 팝업이 튀어나옵니다. */
+  var round = 0;
+
   var NS = "http://www.w3.org/2000/svg";
   function el(name, attrs) {
     var n = document.createElementNS(NS, name);
@@ -224,6 +229,7 @@
 
   function run(i, onDone) {
     if (finished.indexOf(i) !== -1) return;
+    var myRound = round;
     finished.push(i);
     running++;
     startAll.disabled = true;
@@ -296,6 +302,11 @@
     var lastWalk = 0;
 
     function frame(now) {
+      if (myRound !== round) {       /* 그 사이 새 판이 시작됐습니다 */
+        trace.remove();
+        tokenG.remove();
+        return;
+      }
       var p = Math.min((now - t0) / RUN_MS, 1);
       var eased = p < 1 ? 1 - Math.pow(1 - p, 1.7) : 1;  /* 처음엔 빠르고 끝에서 느긋하게 */
       var len = total * eased;
@@ -338,6 +349,7 @@
   /* ---------- 조작 ---------- */
 
   function newRound(keepCount) {
+    round++;
     if (!keepCount) count = draftCount;
     winGoal = Math.floor(Math.random() * count);
     finished = [];
@@ -378,17 +390,21 @@
     var done = 0;
     var winner = -1;
     for (var i = 0; i < count; i++) {
-      (function (idx) {
+      (function (idx, myRound) {
         setTimeout(function () {
+          if (myRound !== round) return;
           run(idx, function (end) {
+            if (myRound !== round) return;
             if (end === winGoal) winner = idx;
             if (++done === count) {
               Progress.bump("ladder");
-              setTimeout(function () { showResult(winner); }, 450);
+              setTimeout(function () {
+                if (myRound === round) showResult(winner);
+              }, 450);
             }
           });
         }, idx * STAGGER);
-      })(i);
+      })(i, round);
     }
   });
 
