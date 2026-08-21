@@ -259,7 +259,7 @@
     spinBtn.disabled = true;
     range.disabled = true;
     svg.querySelectorAll(".sector").forEach(function (s) { s.classList.remove("is-win"); });
-    Sfx.play("spin", { dur: SPIN_MS / 1000 });
+    Sfx.play("spin");
 
     var step = 360 / count;
     var winner = Math.floor(Math.random() * count);

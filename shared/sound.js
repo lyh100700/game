@@ -361,44 +361,11 @@
 
     /* ---- 룰렛 ---- */
 
-    /** 돌아가는 동안 이어지는 바람소리. 돌리는 시간만큼 이어집니다. */
-    spin: function (o) {
-      var c = ensure();
-      if (!c || muted) return;
-      var dur = (o && o.dur) || 2.4;
-      if (!claim(dur)) return;
-      var t0 = c.currentTime;
-
-      var len = Math.max(1, Math.floor(c.sampleRate * dur));
-      var buf = c.createBuffer(1, len, c.sampleRate);
-      var d = buf.getChannelData(0);
-      for (var i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
-
-      var src = c.createBufferSource();
-      src.buffer = buf;
-
-      /* 처음엔 확 올라갔다가 멈출 때까지 천천히 내려옵니다 */
-      var f = c.createBiquadFilter();
-      f.type = "bandpass";
-      f.Q.value = 0.9;
-      f.frequency.setValueAtTime(320, t0);
-      f.frequency.exponentialRampToValueAtTime(2600, t0 + dur * 0.16);
-      f.frequency.exponentialRampToValueAtTime(420, t0 + dur);
-
-      var g = c.createGain();
-      g.gain.setValueAtTime(0.0001, t0);
-      g.gain.linearRampToValueAtTime(0.17, t0 + 0.12);
-      g.gain.setValueAtTime(0.17, t0 + dur * 0.55);
-      g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
-
-      src.connect(f);
-      f.connect(g);
-      g.connect(master);
-      src.start(t0);
-      src.stop(t0 + dur + 0.03);
-
-      /* 낮은 울림을 깔아 묵직하게 */
-      tone({ freq: 70, to: 46, dur: dur, gain: 0.09, type: "sine" });
+    /** 돌리기 시작할 때 한 번 스치는 바람소리.
+        회전 내내 이어지게도 해 봤지만 4초 넘게 깔리니 과했습니다.
+        딸깍 소리가 주인공이라 여기서는 짧게 지나가는 편이 낫습니다. */
+    spin: function () {
+      noise({ freq: 300, to: 2400, dur: 0.5, gain: 0.12, q: 0.7 });
     },
 
     /** 핀이 칸을 넘어갈 때. 매번 조금씩 달라야 기계처럼 들리지 않습니다. */
