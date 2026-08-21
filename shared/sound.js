@@ -17,7 +17,8 @@
 
   var MUTE_KEY = "cutegames.muted.v1";
   var VOLUME = 0.85;
-  var MAX_VOICES = 28;          /* 이보다 많이 겹치면 새 소리를 건너뜁니다 */
+  var MAX_VOICES = 64;          /* 이보다 많이 겹치면 새 소리를 건너뜁니다.
+                                   당첨 팡파르 한 번이 20겹을 쓰므로 넉넉해야 합니다. */
 
   var ctx = null;
   var master = null;            /* 모든 소리가 모이는 곳 */
@@ -110,11 +111,12 @@
   /** 반음 단위로 올린 주파수 */
   function semi(freq, n) { return freq * Math.pow(2, n / 12); }
 
-  /** 목소리 하나를 등록합니다. 너무 많이 겹치면 false. */
-  function claim(dur) {
+  /** 목소리 하나를 등록합니다. 너무 많이 겹치면 false.
+      뒤로 미뤄 둔 소리는 그만큼 늦게 풀어 줘야 자리를 오래 잡고 있지 않습니다. */
+  function claim(dur, delay) {
     if (voices >= MAX_VOICES) return false;
     voices++;
-    setTimeout(function () { voices--; }, (dur + 0.1) * 1000);
+    setTimeout(function () { voices--; }, (dur + (delay || 0) + 0.1) * 1000);
     return true;
   }
 
@@ -134,7 +136,7 @@
     var c = ensure();
     if (!c || muted) return;
     var dur = o.dur || 0.15;
-    if (!claim(dur)) return;
+    if (!claim(dur, o.delay)) return;
     var t0 = c.currentTime + (o.delay || 0);
 
     var osc = c.createOscillator();
@@ -169,7 +171,7 @@
     var c = ensure();
     if (!c || muted) return;
     var dur = o.dur || 0.15;
-    if (!claim(dur)) return;
+    if (!claim(dur, o.delay)) return;
     var t0 = c.currentTime + (o.delay || 0);
 
     var len = Math.max(1, Math.floor(c.sampleRate * dur));
@@ -234,6 +236,16 @@
 
   /* 자주 나는 소리가 똑같이 반복되지 않도록 순서를 돌립니다 */
   var turnRobin = 0;
+
+  /** 나무 핀을 한 번 튕기는 소리. 룰렛의 딸깍은 전부 이걸로 만듭니다.
+      톡 하는 순간(잡음) + 짧은 나무 울림(사각파) 두 겹입니다. */
+  function peg(delay, gain, freq) {
+    noise({ freq: freq * 2.4, dur: 0.008, gain: gain * 0.55, filter: "highpass", delay: delay, attack: 0.001 });
+    tone({ freq: freq, to: freq * 0.55, dur: 0.032, gain: gain, type: "square",
+           cutoff: 3800, delay: delay, attack: 0.001 });
+    /* 꼬리가 길면 빠르게 이어질 때 웅웅거려서 짧게 끊습니다 */
+    tone({ freq: freq * 0.5, dur: 0.03, gain: gain * 0.26, type: "triangle", delay: delay });
+  }
 
   /* ---------- 효과음 목록 ---------- */
   var SOUNDS = {
@@ -361,18 +373,27 @@
 
     /* ---- 룰렛 ---- */
 
-    /** 돌리기 시작할 때 한 번 스치는 바람소리.
-        회전 내내 이어지게도 해 봤지만 4초 넘게 깔리니 과했습니다.
-        딸깍 소리가 주인공이라 여기서는 짧게 지나가는 편이 낫습니다. */
+    /** 돌리기 시작 — 핀이 칸을 훑기 시작하는 "따르르륵".
+        바람소리로도 만들어 봤지만 룰렛다운 소리는 결국 나무 핀 소리입니다.
+        점점 빨라지는 네 번의 톡 소리로 시작을 알리고,
+        그 뒤는 칸을 넘을 때마다 나는 click 이 이어받습니다. */
     spin: function () {
-      noise({ freq: 300, to: 2400, dur: 0.5, gain: 0.12, q: 0.7 });
+      var t = 0;
+      var gap = 0.055;
+      for (var i = 0; i < 4; i++) {
+        peg(t, 0.16 + i * 0.015, rnd(1150, 1400));
+        t += gap;
+        gap *= 0.74;                 /* 점점 촘촘하게 — 속도가 붙는 느낌 */
+      }
+      /* 축이 도는 낮은 울림 — 짧게 깔고 빠집니다 */
+      tone({ freq: 150, to: 96, dur: 0.42, gain: 0.1, type: "triangle", cutoff: 620 });
+      noise({ freq: 520, to: 260, dur: 0.4, gain: 0.05, q: 0.8 });
     },
 
-    /** 핀이 칸을 넘어갈 때. 매번 조금씩 달라야 기계처럼 들리지 않습니다. */
-    click: function () {
-      var f = rnd(1500, 1950);
-      tone({ freq: f, to: f * 0.62, dur: 0.028, gain: rnd(0.08, 0.12), type: "square", cutoff: 4200 });
-      noise({ freq: rnd(3600, 4600), dur: 0.01, gain: 0.05, filter: "highpass" });
+    /** 핀이 칸을 넘어갈 때. 매번 조금씩 달라야 기계처럼 들리지 않습니다.
+        delay 를 주면 그만큼 뒤에 울립니다 (소리를 미리 짜 볼 때 씁니다). */
+    click: function (o) {
+      peg((o && o.delay) || 0, rnd(0.11, 0.15), rnd(1500, 1950));
     },
 
     /** 당첨 — 화음을 쌓고 반짝이는 꼬리를 답니다 */
