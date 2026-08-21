@@ -44,6 +44,8 @@ body { background: #10131a; }
   width: 100%;
   height: 100%;
   object-fit: cover;
+  /* 위쪽을 기준으로 맞춰야 공룡 얼굴이 잘리지 않습니다 */
+  object-position: 50% 0%;
   display: block;
 }
 .stage.is-chomped { animation: shake .5s ease-in-out 2; }
@@ -173,4 +175,8 @@ body { background: #10131a; }
 }
 .hud__num.is-bump { animation: bounceIn .38s cubic-bezier(.2, 1.7, .4, 1); }
 .hud__unit { font-size: 13px; font-weight: 800; color: #d9cfc2; }
-.hud__retry { padding: 14px 22px; font-size: 16px; }
+.hud__retry {
+  padding: 14px 22px;
+  font-size: 16px;
+  background: linear-gradient(180deg, #f5877a 0%, var(--btn-red) 52%, var(--btn-red-deep) 100%);
+}

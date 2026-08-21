@@ -47,15 +47,18 @@
       파일이 없으면 onerror 로 스스로 사라져 이모지가 남습니다. */
   function addFaceArt(parent, artId, cx, cy, r, i) {
     if (!artId || !global_Art) return;
+    /* 흰 원보다 조금 작게 잘라 테두리가 남게 합니다.
+       그래야 그림마다 다른 배경색이 칸 색과 직접 부딪히지 않습니다. */
+    var ri = r - 1.6;
     var clipId = "faceClip" + i;
     var clip = el("clipPath", { id: clipId });
-    clip.appendChild(el("circle", { cx: cx.toFixed(2), cy: cy.toFixed(2), r: r }));
+    clip.appendChild(el("circle", { cx: cx.toFixed(2), cy: cy.toFixed(2), r: ri }));
     parent.appendChild(clip);
 
     var img = el("image", {
       href: global_Art.url(artId),
-      x: (cx - r).toFixed(2), y: (cy - r).toFixed(2),
-      width: r * 2, height: r * 2,
+      x: (cx - ri).toFixed(2), y: (cy - ri).toFixed(2),
+      width: ri * 2, height: ri * 2,
       "clip-path": "url(#" + clipId + ")",
       preserveAspectRatio: "xMidYMid slice",
     });

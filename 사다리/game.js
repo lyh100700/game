@@ -12,6 +12,18 @@
   var LINES = ["#8fd3a4", "#a9b8ef", "#f6a9c0", "#7fd6d1", "#c3e07a", "#f2c07a", "#c9a9e8", "#8fc7ee"];
   var LABELS = ["A", "B", "C", "D", "E", "F", "G", "H"];
 
+  /* 🪨 이모지는 어두운 덩어리로 보여 밝은 화면에 어울리지 않습니다.
+     참고 이미지처럼 표정 있는 조약돌을 직접 그립니다. */
+  var PEBBLE =
+    '<svg viewBox="0 0 40 40" class="pebble">' +
+      '<path d="M6 26 q0-13 14-14 q14 1 14 14 q0 8-14 8 q-14 0-14-8 Z" ' +
+        'fill="#cfc7bd" stroke="#fff" stroke-width="2.4" stroke-linejoin="round"/>' +
+      '<path d="M10 22 q3-7 10-8" stroke="#e6e0d8" stroke-width="2.4" fill="none" stroke-linecap="round"/>' +
+      '<circle cx="15" cy="24" r="1.8" fill="#5c5148"/>' +
+      '<circle cx="25" cy="24" r="1.8" fill="#5c5148"/>' +
+      '<path d="M17 29 q3 2 6 0" stroke="#5c5148" stroke-width="1.6" fill="none" stroke-linecap="round"/>' +
+    '</svg>';
+
   var ROWS = 9;          /* 가로줄이 놓일 수 있는 층 수 */
   var RUNG_CHANCE = 0.45;
   var RUN_MS = 2100;     /* 한 캐릭터가 끝까지 내려가는 시간 */
@@ -201,7 +213,7 @@
       d.dataset.i = i;
       d.style.left = g.xPct(i) + "%";
       d.innerHTML =
-        '<span class="goal__icon">' + (win ? "🏆" : "🪨") + "</span>" +
+        '<span class="goal__icon">' + (win ? "🏆" : PEBBLE) + "</span>" +
         '<span class="goal__name">' + (win ? "당첨" : "꽝") + "</span>" +
         '<span class="goal__sub">' + (win ? "Win" : "Lose") + " · " + LABELS[i] + "</span>";
       goals.appendChild(d);

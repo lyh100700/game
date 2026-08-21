@@ -1,29 +1,20 @@
 /* ===== 메인 선택화면 ===== */
 
 body {
-  background:
-    radial-gradient(130% 55% at 50% 0%, #c6e6bc 0%, transparent 62%),
-    var(--green-bg);
+  background: var(--green-bg) url("shared/art/bg-leaves.svg") center / cover no-repeat fixed;
 }
 
 .main {
-  padding: 16px 14px calc(28px + env(safe-area-inset-bottom));
+  padding: 14px 14px calc(24px + env(safe-area-inset-bottom));
   min-height: 100vh;
 }
 
+/* 메인에서는 소리 버튼을 아래쪽에 둡니다 — 위에 두면 배너와 겹칩니다 */
+.main .sfxBtn { top: auto; bottom: 18px; right: 16px; }
+
 /* 은은한 잎사귀 얼룩 */
-.main__deco {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: .35;
-  background-image:
-    radial-gradient(ellipse 26px 14px at 12% 16%, rgba(255,255,255,.6), transparent 70%),
-    radial-gradient(ellipse 32px 18px at 88% 28%, rgba(255,255,255,.5), transparent 70%),
-    radial-gradient(ellipse 22px 12px at 20% 68%, rgba(255,255,255,.45), transparent 70%),
-    radial-gradient(ellipse 30px 16px at 80% 84%, rgba(255,255,255,.55), transparent 70%),
-    radial-gradient(ellipse 24px 13px at 50% 42%, rgba(255,255,255,.35), transparent 70%);
-}
+/* 배경 그림은 body 가 맡고, 여기에는 반짝임만 얹습니다 */
+.main__deco { position: absolute; inset: 0; pointer-events: none; }
 
 /* ---- 타이틀 배너 ---- */
 .banner {
@@ -34,30 +25,14 @@ body {
   justify-content: center;
   gap: 12px;
   margin: 4px 6px 0;
-  padding: 13px 22px;
+  padding: 10px 20px;
   border: 5px solid #ffffff;
-  border-radius: 24px;
+  border-radius: 22px;
   background: linear-gradient(180deg, #fdf6e2 0%, #f4e7c4 60%, #e8d6a8 100%);
   box-shadow: inset 0 3px 0 rgba(255,255,255,.9), var(--drop-md);
 }
-/* 배너 양쪽에 붙는 리본 꼬리 */
-.banner::before,
-.banner::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  width: 24px;
-  height: 34px;
-  background: #e0c98f;
-  border: 4px solid #fff;
-  transform: translateY(-50%);
-  z-index: -1;
-}
-.banner::before { left: -16px; border-radius: 10px 0 0 10px; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 38% 50%); }
-.banner::after  { right: -16px; border-radius: 0 10px 10px 0; clip-path: polygon(0 0, 100% 0, 62% 50%, 100% 100%, 0 100%); }
-
 .banner__text {
-  font-size: clamp(36px, 11vw, 46px);
+  font-size: clamp(32px, 9.5vw, 40px);
   font-weight: 900;
   letter-spacing: .04em;
   color: #8dc63f;
@@ -74,9 +49,9 @@ body {
   position: relative;
   z-index: 3;
   display: block;
-  width: 132px;
-  height: 132px;
-  margin: -16px auto -36px;
+  width: 112px;
+  height: 112px;
+  margin: -14px auto -30px;
   object-fit: cover;
   object-position: 50% 42%;
   border: 6px solid #ffffff;
@@ -91,17 +66,17 @@ body {
   z-index: 2;
   display: flex;
   flex-direction: column;
-  gap: 13px;
-  margin-top: 16px;
+  gap: 10px;
+  margin-top: 12px;
 }
 
 .card {
   position: relative;
   display: grid;
-  grid-template-columns: 112px 1fr;
-  gap: 13px;
+  grid-template-columns: 96px 1fr;
+  gap: 11px;
   align-items: center;
-  padding: 11px;
+  padding: 9px;
   border: 5px solid #ffffff;
   border-radius: var(--radius);
   background: linear-gradient(180deg, #fffaf0 0%, var(--cream) 55%, var(--cream-deep) 100%);
@@ -116,7 +91,7 @@ body {
 .card__title {
   display: block;
   margin-bottom: 2px;
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 900;
   line-height: 1.05;
   letter-spacing: -.02em;
@@ -130,8 +105,8 @@ body {
 .bar {
   position: relative;
   display: block;
-  height: 21px;
-  margin: 7px 0 9px;
+  height: 17px;
+  margin: 6px 0 7px;
   border: 3px solid #fff;
   border-radius: 999px;
   background: #b08a63;
@@ -160,13 +135,13 @@ body {
 .card__play {
   position: relative;
   display: block;
-  padding: 10px 0;
+  padding: 8px 0;
   border: 3px solid #fff;
   border-radius: 999px;
   background: linear-gradient(180deg, #9ad86c 0%, var(--btn-green) 52%, var(--btn-green-deep) 100%);
   box-shadow: var(--gloss), 0 3px 0 rgba(107, 63, 42, .18);
   color: #fff;
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 900;
   text-align: center;
   text-shadow: 0 2px 0 rgba(0, 0, 0, .22);
@@ -177,108 +152,45 @@ body {
   position: relative;
   display: grid;
   place-items: center;
-  height: 98px;
+  height: 84px;
   border: 4px solid #fff;
-  border-radius: 16px;
+  border-radius: 14px;
   overflow: hidden;
-  font-size: 42px;
-  box-shadow: inset 0 -4px 8px rgba(0, 0, 0, .1), 0 3px 0 rgba(107, 63, 42, .12);
+  box-shadow: inset 0 -4px 8px rgba(0, 0, 0, .08), 0 3px 0 rgba(107, 63, 42, .12);
 }
-.thumb > span { filter: drop-shadow(0 3px 3px rgba(0,0,0,.22)); }
 .thumb--dino   { background: linear-gradient(180deg, #d3edf9, #f0fbff); }
-.thumb--ladder { background: linear-gradient(180deg, #d3e9f9, #f7efdc); }
-.thumb--watch  { background: linear-gradient(180deg, #e2f5ec, #fbfdf8); }
-.thumb--wheel  { background: linear-gradient(180deg, #f0e6fc, #fdf3fa); }
+.thumb--ladder { background: linear-gradient(180deg, #dbeaf7, #f8f0dd); }
+.thumb--watch  { background: linear-gradient(180deg, #e6f4ee, #fbfdf8); }
+.thumb--wheel  { background: linear-gradient(180deg, #f1e7fc, #fdf4fa); }
+
+.tsvg {
+  width: 100%;
+  height: 100%;
+  padding: 1px;
+  filter: drop-shadow(0 2px 2px rgba(107, 63, 42, .18));
+}
 
 .thumb__tag {
   position: absolute;
-  top: 5px;
-  right: 5px;
-  padding: 3px 8px;
+  top: 4px;
+  right: 4px;
+  padding: 2px 7px;
   border: 2px solid #fff;
-  border-radius: 9px;
+  border-radius: 8px;
   background: linear-gradient(180deg, #ffc94d, #f0a01e);
   color: #fff;
-  font-size: 8.5px;
+  font-size: 8px;
   font-weight: 900;
-  letter-spacing: .02em;
   text-shadow: 0 1px 0 rgba(0,0,0,.2);
   box-shadow: 0 2px 0 rgba(0,0,0,.15);
   transform: rotate(6deg);
 }
-.thumb__teeth {
-  position: absolute;
-  inset: auto 6px 6px;
-  display: flex;
-  justify-content: space-around;
-  font-size: 15px;
-}
-
-/* 미니 사다리 */
-.miniLadder {
-  position: relative;
-  width: 64px;
-  height: 54px;
-  transform: rotate(-7deg);
-  filter: drop-shadow(0 3px 3px rgba(0,0,0,.2));
-}
-.miniLadder i { position: absolute; border-radius: 999px; }
-.miniLadder i:nth-child(1) { left: 5px;  top: 0; width: 7px; height: 100%; background: #6fcf97; }
-.miniLadder i:nth-child(2) { right: 5px; top: 0; width: 7px; height: 100%; background: #56ccf2; }
-.miniLadder i:nth-child(3) { left: 5px; top: 20%; width: calc(100% - 10px); height: 7px; background: #f2c94c; }
-.miniLadder i:nth-child(4) { left: 5px; top: 48%; width: calc(100% - 10px); height: 7px; background: #f28b82; }
-.miniLadder i:nth-child(5) { left: 5px; top: 76%; width: calc(100% - 10px); height: 7px; background: #bb6bd9; }
-.thumb__pins {
-  position: absolute;
-  inset: auto 10px 3px;
-  display: flex;
-  justify-content: space-between;
-  font-size: 17px;
-}
-
-/* 미니 스톱워치 */
-.thumb__eq {
-  position: absolute;
-  inset: auto 0 8px;
-  font-size: 12px;
-  font-weight: 900;
-  color: #8a6047;
-  text-align: center;
-  -webkit-text-stroke: 3px #fff;
-  paint-order: stroke fill;
-}
-
-/* 미니 룰렛 — 흰 칸막이까지 겹쳐 그립니다 */
-.miniWheel {
-  position: relative;
-  width: 62px;
-  height: 62px;
-  border-radius: 50%;
-  border: 4px solid #fff;
-  box-shadow: 0 3px 7px rgba(107, 63, 42, .35);
-  background:
-    repeating-conic-gradient(rgba(255,255,255,.95) 0deg 3deg, transparent 3deg 45deg),
-    conic-gradient(
-      var(--c1) 0 45deg, var(--c2) 45deg 90deg, var(--c3) 90deg 135deg,
-      var(--c4) 135deg 180deg, var(--c5) 180deg 225deg, var(--c6) 225deg 270deg,
-      var(--c7) 270deg 315deg, var(--c8) 315deg 360deg);
-  animation: spinSlow 9s linear infinite;
-}
-.miniWheel::after {
-  content: "";
-  position: absolute;
-  inset: 38%;
-  border-radius: 50%;
-  background: radial-gradient(circle at 34% 30%, #fff, #b9a6e8);
-  border: 2px solid #fff;
-}
-@keyframes spinSlow { to { transform: rotate(360deg); } }
 
 /* ---- 하단 ---- */
 .main__foot {
   position: relative;
   z-index: 2;
-  margin-top: 20px;
+  margin-top: 14px;
   text-align: center;
 }
 .install {

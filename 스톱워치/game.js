@@ -205,6 +205,15 @@
     if (!action.disabled) action.click();
   });
 
+  /* 마스코트에 생성 그림이 있으면 얹습니다 (없으면 이모지 그대로) */
+  if (window.Art) {
+    var buddyArt = { "buddy--a": "ch-cat", "buddy--b": "ch-bear" };
+    Object.keys(buddyArt).forEach(function (cls) {
+      var el = document.querySelector("." + cls);
+      if (el) el.insertAdjacentHTML("beforeend", Art.tag(buddyArt[cls]));
+    });
+  }
+
   Sfx.mountToggle(document.getElementById("screen"));
   Fx.sparkles(document.querySelector(".sky"), 6, ["✨", "💫", "⭐"]);
   reset();

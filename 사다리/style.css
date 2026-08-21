@@ -6,9 +6,7 @@ body { background: var(--paper); }
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background:
-    radial-gradient(110% 45% at 50% 0%, #ffffff 0%, transparent 60%),
-    linear-gradient(180deg, #fdfaf3 0%, var(--paper) 45%, #f2ece0 100%);
+  background: var(--paper) url("../shared/art/bg-paper.svg") center / cover no-repeat fixed;
 }
 .ladder .topbar__title {
   color: #7cb85f;
@@ -48,6 +46,7 @@ body { background: var(--paper); }
 .node__face {
   position: relative;
   overflow: hidden;
+  isolation: isolate;
   display: grid;
   place-items: center;
   width: 48px;
@@ -114,8 +113,8 @@ body { background: var(--paper); }
 .track { position: relative; flex: 1 1 auto; min-height: 210px; }
 .track__svg { position: absolute; inset: 0; width: 100%; height: 100%; }
 
-.rail, .rung { stroke-linecap: round; opacity: .45; }
-.railHi { stroke-linecap: round; pointer-events: none; }
+.rail, .rung { stroke-linecap: round; opacity: .92; }
+.railHi { stroke-linecap: round; pointer-events: none; opacity: .5; }
 
 .trace {
   fill: none;
@@ -178,3 +177,25 @@ body { background: var(--paper); }
   -webkit-text-stroke: 4px #fff;
   paint-order: stroke fill;
 }
+
+
+/* 생성 그림은 저마다 배경색이 달라 그대로 쓰면 줄이 어수선해 보입니다.
+   조금 확대해 동물이 원을 채우게 하고, 흰 테두리로 묶어 한 세트처럼 보이게 합니다. */
+.node__face .artImg,
+.goal__icon .artImg {
+  transform: scale(1.22);
+}
+.node__face::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .85),
+              inset 0 -6px 10px rgba(0, 0, 0, .12);
+  pointer-events: none;
+}
+
+
+/* 직접 그린 조약돌 */
+.pebble { width: 30px; height: 30px; filter: drop-shadow(0 2px 2px rgba(0,0,0,.18)); }
