@@ -4,8 +4,8 @@
 
   var cards = document.getElementById("cards");
 
-  /* 게임별 썸네일. 카드 왼쪽의 작은 그림입니다. */
-  /* 카드 썸네일. 이모지 대신 직접 그린 작은 일러스트입니다. */
+  /* 카드 썸네일. shared/art/thumb-*.jpg 그림이 있으면 그 그림이 덮이고,
+     없으면 아래 SVG 가 그대로 보입니다. */
   var THUMBS = {
     dino:
       "<span class='thumb__tag'>CHOMPED!</span><svg viewBox='0 0 64 60' class='tsvg'> <ellipse cx='32' cy='54' rx='22' ry='4' fill='#9fd3e8' opacity='.45'/> <path d='M13 42 v-10 q0-16 19-16 q19 0 19 16 v10 Z' fill='#6cc06a' stroke='#fff' stroke-width='2.4' stroke-linejoin='round'/> <path d='M11 41 h42 q0 12-21 12 q-21 0-21-12 Z' fill='#b83c2e' stroke='#fff' stroke-width='2.4' stroke-linejoin='round'/> <path d='M18 50 q14 6 28 0 q-3 5-14 5 q-11 0-14-5 Z' fill='#f0819a'/> <g fill='#fffaf0' stroke='#dcc9ae' stroke-width='.7'>  <path d='M16 41 l3 6 3-6 Z'/><path d='M25 41 l3.4 7 3.4-7 Z'/>  <path d='M35 41 l3.4 7 3.4-7 Z'/><path d='M45 41 l3 6 3-6 Z'/> </g> <circle cx='24' cy='28' r='6' fill='#fff' stroke='#4e9a4c' stroke-width='1.2'/> <circle cx='41' cy='28' r='6' fill='#fff' stroke='#4e9a4c' stroke-width='1.2'/> <circle cx='25.4' cy='29' r='2.8' fill='#33261a'/><circle cx='42.4' cy='29' r='2.8' fill='#33261a'/> <circle cx='24.3' cy='27.6' r='1' fill='#fff'/><circle cx='41.3' cy='27.6' r='1' fill='#fff'/> <path d='M27 18 l4-6 4 6 4-5 4 5' fill='none' stroke='#4e9a4c' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/> <g transform='translate(53 30) rotate(28)'>  <path d='M0 0 l3.4 7.5 3.4-7.5 Z' fill='#fffaf0' stroke='#d9c6ab' stroke-width='.9'/> </g> <path d='M7 16 l1.8 3.6 3.6 1.8-3.6 1.8-1.8 3.6-1.8-3.6-3.6-1.8 3.6-1.8 Z' fill='#fff' opacity='.9'/></svg>",
@@ -19,18 +19,13 @@
 
   function render() {
     cards.innerHTML = GAMES.map(function (g) {
-      var played = Progress.get(g.id);
-      var pct = (played / Progress.MAX) * 100;
       return (
         '<a class="card" href="' + encodeURIComponent(g.dir) + '/index.html">' +
-          '<span class="thumb thumb--' + g.thumb + '">' + THUMBS[g.thumb] + "</span>" +
+          '<span class="thumb thumb--' + g.thumb + '">' +
+            THUMBS[g.thumb] + Art.tag("thumb-" + g.thumb) + "</span>" +
           '<span class="card__body">' +
             '<span class="card__title">' + g.title + "</span>" +
             '<span class="card__ko">' + g.ko + "</span>" +
-            '<span class="bar">' +
-              '<span class="bar__fill" style="width:' + pct + '%"></span>' +
-              '<span class="bar__label">' + played + "/" + Progress.MAX + "</span>" +
-            "</span>" +
             '<span class="card__play">Play Now</span>' +
           "</span>" +
         "</a>"
@@ -42,47 +37,9 @@
     if (e.target.closest(".card")) Sfx.play("pop");
   });
 
-  document.getElementById("resetAll").addEventListener("click", function () {
-    if (confirm("모든 게임의 플레이 기록을 지울까요?")) {
-      Sfx.play("back");
-      Progress.reset();
-      render();
-    }
-  });
-
   render();
   Sfx.mountToggle(document.getElementById("screen"));
   Fx.sparkles(document.querySelector(".main__deco"), 5, ["✨", "🍃", "⭐"]);
-
-  /* 게임에서 돌아왔을 때 진행바를 최신으로 (뒤로가기 캐시 대응) */
-  window.addEventListener("pageshow", render);
-
-  /* ---- 앱 설치 ---- */
-
-  /* 안드로이드 크롬은 설치 가능해지면 이 이벤트를 줍니다.
-     기본 배너를 막고, 우리 버튼으로 직접 띄웁니다. */
-  var deferred = null;
-  var installBtn = document.getElementById("install");
-
-  window.addEventListener("beforeinstallprompt", function (e) {
-    e.preventDefault();
-    deferred = e;
-    installBtn.hidden = false;
-  });
-
-  installBtn.addEventListener("click", function () {
-    if (!deferred) return;
-    Sfx.play("tap");
-    deferred.prompt();
-    deferred.userChoice.then(function () {
-      deferred = null;
-      installBtn.hidden = true;
-    });
-  });
-
-  window.addEventListener("appinstalled", function () {
-    installBtn.hidden = true;
-  });
 
   /* ---- 오프라인 지원 ---- */
   if ("serviceWorker" in navigator && location.protocol !== "file:") {

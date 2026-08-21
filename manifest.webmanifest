@@ -9,8 +9,8 @@
   "id": "/game/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#a9d5a1",
-  "theme_color": "#a9d5a1",
+  "background_color": "#163a2d",
+  "theme_color": "#163a2d",
   "categories": ["games", "entertainment"],
   "icons": [
     {

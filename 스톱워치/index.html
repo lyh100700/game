@@ -40,15 +40,18 @@
     <!-- 시간 표시 -->
     <div class="display">
       <div class="display__time" id="time">00:00.00</div>
-      <div class="display__hint" aria-hidden="true">
-        <span class="display__arrow">↗</span>
-        <span class="display__note">이 자리!</span>
+      <div class="display__hint">
+        <img class="display__eg" src="../shared/art/watch-hint.png"
+             alt="예시 00:09.17 — 화살표가 가리키는 마지막 자리를 씁니다"
+             onerror="this.remove()">
+        <span class="display__note">끝자리를 곱해요</span>
       </div>
     </div>
 
     <!-- 조작 버튼 -->
     <div class="pads">
       <button class="pad pad--cloud" id="reset" type="button">
+        <img class="pad__art" src="../shared/art/watch-cloud.png" alt="" onerror="this.remove()">
         <svg class="pad__svg" viewBox="0 0 150 100" aria-hidden="true">
           <!-- 같은 도형을 두 번 그립니다: 뒤에는 굵은 흰 선으로 테두리를, 앞에는 색을 채워 -->
           <g class="pad__outline"><g class="cloudBody">
@@ -68,6 +71,9 @@
       </button>
 
       <button class="pad pad--star" id="action" type="button">
+        <img class="pad__art" src="../shared/art/watch-star.png" alt="" onerror="this.remove()">
+        <img class="pad__art pad__art--stop" src="../shared/art/watch-star-stop.png"
+             alt="" onerror="this.remove()">
         <svg class="pad__svg" viewBox="0 0 100 100" aria-hidden="true">
           <polygon class="star" points="50.00,3.00 62.05,33.42 94.70,35.48 69.50,56.33 77.63,88.02 50.00,70.50 22.37,88.02 30.50,56.33 5.30,35.48 37.95,33.42"/>
           <polygon class="star__gloss" points="50.00,3.00 62.05,33.42 94.70,35.48 69.50,56.33 77.63,88.02 50.00,70.50 22.37,88.02 30.50,56.33 5.30,35.48 37.95,33.42"/>
@@ -77,24 +83,16 @@
       </button>
     </div>
 
-    <!-- 결과 -->
+    <!-- 결과 — 그려 둔 결과판 위에 실제 값만 얹습니다 -->
     <section class="result">
-      <h2 class="result__title">게임 결과</h2>
-      <div class="result__row">
-        <div class="slot" id="slot1">
-          <span class="slot__name">Time 1</span>
-          <span class="slot__time" id="t1">--:--.--</span>
-          <span class="slot__digit" id="d1">?</span>
-        </div>
-        <div class="slot" id="slot2">
-          <span class="slot__name">Time 2</span>
-          <span class="slot__time" id="t2">--:--.--</span>
-          <span class="slot__digit" id="d2">?</span>
-        </div>
-        <div class="slot slot--total">
-          <span class="slot__name">곱하기 결과</span>
-          <span class="slot__total" id="total">?</span>
-        </div>
+      <div class="board">
+        <img class="board__bg" src="../shared/art/watch-board.jpg"
+             alt="게임 결과판" onerror="this.closest('.board').classList.add('is-bare')">
+        <span class="board__time board__time--1" id="t1">--:--.--</span>
+        <span class="board__time board__time--2" id="t2">--:--.--</span>
+        <span class="board__dial board__dial--1" id="slot1"><i id="d1">?</i></span>
+        <span class="board__dial board__dial--2" id="slot2"><i id="d2">?</i></span>
+        <span class="board__total" id="total">?</span>
       </div>
     </section>
 

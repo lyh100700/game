@@ -9,6 +9,11 @@
   /* 배경 */
   --green-bg: #a9d5a1;
   --green-bg-deep: #8fc686;
+
+  /* 메인 화면의 진한 숲 색 (앱 아이콘·카드 그림과 맞춘 값) */
+  --forest: #163a2d;
+  --forest-deep: #0e2a20;
+  --leaf: #8dd85f;
   --cream: #fdf3dd;
   --cream-deep: #f5e6c8;
   --paper: #f9f5ec;

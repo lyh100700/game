@@ -12,11 +12,17 @@ game/
 ├── games.js                게임 매니페스트
 ├── manifest.webmanifest    PWA 설정
 ├── sw.js                   서비스 워커 (오프라인)
-├── icons/                  앱 아이콘 (앱아이콘.jpg 에서 생성)
+├── 앱아이콘.png            메인 화면 마스코트 (배경을 지운 투명 PNG)
+├── icons/                  앱 아이콘 (스타트 화면/앱아이콘.jpeg 에서 생성)
 ├── shared/
 │   ├── theme.css           색·버튼·팝업 등 공통 토큰
 │   ├── progress.js         플레이 횟수 기록 (localStorage)
-│   └── sound.js            효과음 엔진 (Web Audio 합성)
+│   ├── art.js              그림이 있으면 얹고 없으면 물러나는 헬퍼
+│   ├── sound.js            효과음 엔진 (Web Audio 합성)
+│   └── art/                생성한 그림 (배경·캐릭터·썸네일·스톱워치 부품)
+├── tools/
+│   ├── build-assets.py     첨부 사진 -> 앱에서 쓰는 파일 만들기
+│   └── imglib.py           검은 배경 지우기·비율 맞추기
 ├── 이빨/       DINO CHOMP    공룡 이빨 누르기
 ├── 사다리/     LADDER PATH   사다리 타기
 ├── 스톱워치/   MULTIPLY TIME 시간 곱하기
@@ -48,11 +54,31 @@ game/
 - **나머지 셋**: 스크린샷에 UI 가 함께 찍혀 있어 배경으로 쓸 수 없습니다.
   같은 톤(파스텔 하늘·크림색)을 CSS 로 재현했습니다.
 
+## 그림 자산
+
+원본 사진은 `스타트 화면/` 과 `스톱워치/` 에 그대로 두고,
+앱이 쓰는 파일은 아래 명령으로 **다시 만들 수 있게** 해 두었습니다.
+
+```bash
+python3 tools/build-assets.py     # Pillow 만 있으면 됩니다
+```
+
+- 앱 아이콘 (`icons/*.png`) 과 마스코트 (`앱아이콘.png`) — 검은 배경을 지워 투명하게
+- 카드 썸네일 (`shared/art/thumb-*.jpg`) — 96:84 비율로 가장자리를 늘려 맞춤
+- 스톱워치 부품 (`shared/art/watch-*.png|jpg`)
+  - `watch-board.jpg` 는 원본에 **적혀 있던 숫자를 지운** 판입니다.
+    실제 값은 `스톱워치/style.css` 에서 백분율 좌표로 그 자리에 얹습니다.
+    좌표를 다시 뽑으려면 `build-assets.py` 출력의 "결과판 좌표(%)" 를 보세요.
+  - `watch-star.png` 는 "계속" 글자를 지운 별입니다. 화면에서 시작·멈춤·완료를 얹습니다.
+  - `watch-star-stop.png` 는 멈춤 상태용으로 보라색만 분홍으로 옮긴 별입니다.
+  - `watch-cloud.png` 는 늘 "초기화" 라서 그려진 글자를 그대로 씁니다.
+
 ## 게임 추가하기
 
 1. 게임 이름으로 폴더를 만들고 `index.html` / `style.css` / `game.js` 를 만든다.
 2. `games.js` 의 `GAMES` 배열에 한 줄 추가한다.
-3. `main.js` 의 `THUMBS` 에 썸네일을, `main.css` 에 `.thumb--<이름>` 배경색을 추가한다.
+3. `main.js` 의 `THUMBS` 에 예비 SVG 를, `main.css` 에 `.thumb--<이름>` 배경색을 추가하고,
+   `shared/art/thumb-<이름>.jpg` 그림을 넣는다 (그림이 있으면 SVG 를 덮습니다).
 4. `sw.js` 의 `ASSETS` 에 새 파일 경로를 넣고 `VERSION` 을 올린다.
 
 ## 실행

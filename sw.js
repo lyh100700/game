@@ -2,7 +2,7 @@
    앱을 한 번 열면 파일을 폰에 저장해 두고, 다음부터는 인터넷 없이도 실행됩니다.
    내용을 고친 뒤에는 아래 VERSION 숫자를 반드시 올리세요. 그래야 갱신됩니다. */
 
-const VERSION = 6;
+const VERSION = 7;
 const CACHE = "cutegames-v" + VERSION;
 
 const ASSETS = [
@@ -12,7 +12,7 @@ const ASSETS = [
   "./main.js",
   "./games.js",
   "./manifest.webmanifest",
-  "./앱아이콘.jpg",
+  "./앱아이콘.png",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
   "./icons/icon-maskable-512.png",
@@ -23,7 +23,17 @@ const ASSETS = [
   "./shared/sound.js",
   "./shared/fx.js",
   "./shared/art.js",
+  "./shared/art/bg-forest.svg",
   "./shared/art/bg-leaves.svg",
+  "./shared/art/thumb-dino.jpg",
+  "./shared/art/thumb-ladder.jpg",
+  "./shared/art/thumb-watch.jpg",
+  "./shared/art/thumb-wheel.jpg",
+  "./shared/art/watch-board.jpg",
+  "./shared/art/watch-hint.png",
+  "./shared/art/watch-star.png",
+  "./shared/art/watch-star-stop.png",
+  "./shared/art/watch-cloud.png",
   "./shared/art/bg-clouds.svg",
   "./shared/art/bg-paper.svg",
   "./shared/art/ch-bear.jpg",

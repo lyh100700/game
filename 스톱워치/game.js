@@ -12,6 +12,7 @@
   var actionLabel = document.getElementById("actionLabel");
   var resetBtn = document.getElementById("reset");
   var popup = document.getElementById("popup");
+  var screen = document.getElementById("screen");
 
   /* idle → run1 → gap → run2 → done */
   var phase = "idle";
@@ -75,6 +76,7 @@
     lastTick = 0;
     guide.textContent = n === 1 ? "첫 번째 시간 — 별을 눌러 멈추세요" : "두 번째 시간 — 다시 멈추세요!";
     guide.classList.add("is-live");
+    screen.classList.add("is-live");
     action.classList.add("is-stop", "is-live");
     action.disabled = false;
     actionLabel.textContent = "멈춤";
@@ -92,6 +94,7 @@
     Sfx.play("stop");
     action.classList.remove("is-stop", "is-live");
     guide.classList.remove("is-live");
+    screen.classList.remove("is-live");
 
     var n = records.length;
     document.getElementById("t" + n).textContent = format(ms);
@@ -166,6 +169,7 @@
     paint(0, false);
     guide.textContent = "별을 눌러 시작하세요";
     guide.classList.remove("is-live");
+    screen.classList.remove("is-live");
     action.disabled = false;
     action.classList.remove("is-stop", "is-live");
     actionLabel.textContent = "시작";
