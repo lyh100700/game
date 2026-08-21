@@ -203,7 +203,7 @@
       b.style.left = g.xPct(i) + "%";
       b.style.setProperty("--tone", TONES[i]);
       b.innerHTML =
-        '<span class="node__face">' + CAST[i].emoji + Chars.tag(CAST[i].id) + "</span>" +
+        '<span class="node__face">' + Chars.face(CAST[i].id) + "</span>" +
         '<span class="node__label">' + LABELS[i] + "</span>";
       heads.appendChild(b);
 
@@ -359,7 +359,7 @@
       x.textContent = "당첨은 " + LABELS[winGoal] + " 자리에 있었어요.";
       Sfx.play("lose");
     } else {
-      e.innerHTML = CAST[winnerIdx].emoji + Chars.tag(CAST[winnerIdx].id);
+      e.innerHTML = Chars.face(CAST[winnerIdx].id);
       t.textContent = "당첨!";
       Fx.confetti(document.getElementById("screen"), { x: 50, y: 45, count: 52 });
       x.textContent = LABELS[winnerIdx] + " 캐릭터가 당첨됐어요! 🏆";

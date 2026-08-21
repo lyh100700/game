@@ -51,5 +51,12 @@
       return '<img class="charImg ' + (cls || "") + '" alt="" src="' +
              this.url(id) + '" onerror="this.remove()">';
     },
+
+    /** 캐릭터 한 마리 = 예비 이모지 + 그림.
+        그림이 붙으면 이모지는 CSS 가 숨깁니다 — 둘이 겹쳐 보이면 안 되니까요.
+        그림을 못 불러오면 img 가 사라지면서 이모지가 도로 나타납니다. */
+    face: function (id, cls) {
+      return '<i class="charEmoji">' + this.get(id).emoji + "</i>" + this.tag(id, cls);
+    },
   };
 })(window);

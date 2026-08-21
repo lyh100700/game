@@ -268,7 +268,7 @@
 
   if (window.Chars) {
     Chars.pick(buddies.length).forEach(function (c, n) {
-      buddies[n].innerHTML = c.emoji + Chars.tag(c.id);
+      buddies[n].innerHTML = Chars.face(c.id);
       buddies[n].title = c.ko;
     });
   }

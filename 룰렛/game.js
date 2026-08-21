@@ -243,7 +243,7 @@
       var c = who(i);
       html +=
         '<div class="prow" style="--t1:' + t[0] + ";--t2:" + t[1] + '">' +
-          '<span class="prow__face">' + c.emoji + Chars.tag(c.id) + "</span>" +
+          '<span class="prow__face">' + Chars.face(c.id) + "</span>" +
           '<span class="prow__name">Player ' + (i + 1) + "</span>" +
           '<span class="prow__ko">' + c.ko + "</span>" +
         "</div>";
@@ -259,7 +259,7 @@
     spinBtn.disabled = true;
     range.disabled = true;
     svg.querySelectorAll(".sector").forEach(function (s) { s.classList.remove("is-win"); });
-    Sfx.play("spin");
+    Sfx.play("spin", { dur: SPIN_MS / 1000 });
 
     var step = 360 / count;
     var winner = Math.floor(Math.random() * count);
@@ -314,7 +314,7 @@
 
     setTimeout(function () {
       var c = who(winner);
-      document.getElementById("popEmoji").innerHTML = c.emoji + Chars.tag(c.id);
+      document.getElementById("popEmoji").innerHTML = Chars.face(c.id);
       document.getElementById("popTitle").textContent = "Player " + (winner + 1) + " 당첨!";
       document.getElementById("popText").textContent =
         count + "명 중 " + (winner + 1) + "번(" + c.ko + ") 칸이 뽑혔어요. 🎊";

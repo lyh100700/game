@@ -1,6 +1,6 @@
 /* ===== LADDER PATH ===== */
 
-body { background: var(--paper); }
+body { background: #e6ddf5; }
 
 .ladder {
   display: flex;
@@ -9,15 +9,19 @@ body { background: var(--paper); }
   height: 100vh;
   height: 100svh;
   overflow: hidden;
-  background: var(--paper) url("../shared/art/bg-paper.svg") center / cover no-repeat fixed;
+  /* 룰렛·스톱워치와 같은 파스텔 구름 하늘 */
+  background: #e6ddf5 url("../shared/art/bg-clouds.svg") center top / cover no-repeat;
 }
 .ladder .topbar { flex: 0 0 auto; padding: 10px 14px; }
+/* 배경이 파스텔로 바뀌어 연한 초록은 묻힙니다 — 한 톤 진하게 */
 .ladder .topbar__title {
-  color: #7cb85f;
+  color: #59a83f;
   -webkit-text-stroke: 5px #fff;
   paint-order: stroke fill;
-  text-shadow: 0 3px 0 rgba(92, 156, 53, .3);
+  text-shadow: 0 3px 0 rgba(70, 130, 45, .32);
 }
+.ladder .topbar { color: #5d5a7a; }
+.ladder .topbar__back { background: linear-gradient(180deg, #fff, #ece7f6); color: #5d5a7a; }
 
 /* ---- 사다리판 ---- */
 .board {

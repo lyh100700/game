@@ -6,11 +6,8 @@
      4) 그림자는 흐린 것 하나가 아니라, 단단한 것 + 부드러운 것 두 겹 */
 
 :root {
-  /* 배경 */
-  --green-bg: #a9d5a1;
-  --green-bg-deep: #8fc686;
-
-  /* 메인 화면의 진한 숲 색 (앱 아이콘·카드 그림과 맞춘 값) */
+  /* 배경 — 앱 전체가 이 진한 숲 색을 기준으로 합니다.
+     위아래 띠(주소창·상태바)도 같은 색이라 화면이 하나로 이어져 보입니다. */
   --forest: #163a2d;
   --forest-deep: #0e2a20;
   --leaf: #8dd85f;
@@ -347,3 +344,6 @@ body {
   object-fit: contain;
   pointer-events: none;
 }
+/* 예비 이모지 — 그림이 붙으면 숨깁니다. 그래야 뒤로 삐져나와 겹쳐 보이지 않습니다. */
+.charEmoji { font-style: normal; line-height: 1; }
+:has(> .charImg) > .charEmoji { display: none; }
